@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="李素晴"><meta name="copyright" content="李素晴"><meta name="generator" content="Hexo 5.1.1"><meta name="theme" content="hexo-theme-yun"><title>tcp | Lisuqing's Personal Website</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.21/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_2138379_1l6ur2tg9f2.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/photo/icon.png"><link rel="mask-icon" href="/photo/icon.png" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"lisuqing2020.github.io","root":"/","title":"李素晴的日记","version":"1.2.0","mode":"time","copycode":true,"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script data-ad-client="ca-pub-9695375546022807" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><meta name="description" content="自顶向下方法第3章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tcp">
+<meta property="og:url" content="http://lisuqing2020.github.io/2020/10/03/net/tcp/index.html">
+<meta property="og:site_name" content="Lisuqing&#39;s Personal Website">
+<meta property="og:description" content="自顶向下方法第3章">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-03T10:41:53.000Z">
+<meta property="article:modified_time" content="2020-10-03T10:41:53.000Z">
+<meta property="article:author" content="李素晴">
+<meta property="article:tag" content="tda">
+<meta name="twitter:card" content="summary"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="李素晴"><img width="96" loading="lazy" src="/photo/avatar.jpg" alt="李素晴"></a><div class="site-author-name"><a href="/about/">李素晴</a></div><a class="site-name" href="/about/site.html">Lisuqing's Personal Website</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">227</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder--line"></use></svg></span><span class="site-state-item-count">10</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag--line"></use></svg></span><span class="site-state-item-count">21</span></a></div><a class="site-state-item hty-icon-button" href="/about" title="留言板"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-clipboard-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1164919034&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/lisuqing2020" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:lisuqing2020@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://juejin.im/user/676954896099847" title="掘金" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-juejin"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://nobilta.github.io/" title="东农吴彦祖" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://happycpp.github.io/" title="渣王" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP%E6%8A%A5%E6%96%87%E6%AE%B5%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">TCP报文段结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%8F%E5%8F%B7%E5%92%8C%E7%A1%AE%E8%AE%A4%E5%8F%B7"><span class="toc-number">1.1.</span> <span class="toc-text">序号和确认号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RTT%E7%9A%84%E4%BC%B0%E8%AE%A1%E4%B8%8E%E8%B6%85%E6%97%B6"><span class="toc-number">2.</span> <span class="toc-text">RTT的估计与超时</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="toc-number">3.</span> <span class="toc-text">可靠数据传输</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B6%85%E6%97%B6%E9%97%B4%E9%9A%94%E5%8A%A0%E5%80%8D"><span class="toc-number">3.1.</span> <span class="toc-text">超时间隔加倍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E9%87%8D%E4%BC%A0"><span class="toc-number">3.2.</span> <span class="toc-text">快速重传</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GNB-or-SR"><span class="toc-number">3.3.</span> <span class="toc-text">GNB or SR ?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="toc-number">4.</span> <span class="toc-text">流量控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">TCP连接管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="toc-number">5.1.</span> <span class="toc-text">三次握手</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="toc-number">5.2.</span> <span class="toc-text">四次挥手</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP%E7%8A%B6%E6%80%81"><span class="toc-number">5.3.</span> <span class="toc-text">TCP状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="toc-number">6.</span> <span class="toc-text">拥塞控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%E7%AE%97%E6%B3%95"><span class="toc-number">6.1.</span> <span class="toc-text">TCP拥塞控制算法</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://lisuqing2020.github.io/2020/10/03/net/tcp/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="李素晴"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Lisuqing's Personal Website"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">tcp</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-10-03 18:41:53" itemprop="dateCreated datePublished" datetime="2020-10-03T18:41:53+08:00">2020-10-03</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-category"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span> <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category" href="/categories/net/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">net</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag" href="/tags/tda/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">tda</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><p>自顶向下方法第3章</p>
+<a id="more"></a>
+
+<p>在讲解TCP之前，我们需要明确几个概念。</p>
+<p>最大报文段长度(MSS)：MSS是指在报文段里应用层数据的最大长度，而不是指包括首部的TCP报文段的最大长度。通常根据最初确定的由本地主机发送的最大链路层帧长度（即所谓的最大传输单元MTU）来设置。</p>
+<p>TCP连接的组成：一台主机上的缓存、变量和与进程连接的套接字，以及另一台主机上的另一组缓存、变量和与进程连接的套接字。两端都有各自的发送缓存和接收缓存。在这两台主机之间的网络元素（路由器、交换机、中继器），没有为该连接分配任何缓存和变量。</p>
+<p>全双工服务：TCP提供的是全双工服务，可以类比为双向通行的道路。</p>
+<h2 id="TCP报文段结构"><a href="#TCP报文段结构" class="headerlink" title="TCP报文段结构"></a>TCP报文段结构</h2><p>TCP报文段分为首部字段和数据字段，数据字段包含一块应用数据，MSS限制了报文段数据字段的最大长度。当TCP传送大文件时，会将该文件划分为长度为MSS的若干块。</p>
+<p>TCP首部包含字段如下。</p>
+<ol>
+<li>源端口号(16b)&amp;目的端口号(16b)：用于多路复用/分解来自或送到上层应用的数据。</li>
+<li>检验和字段(16b)：用于差错校验。</li>
+<li>序号字段(32b)&amp;确认号字段(32b)：用于实现可靠数据传输服务。</li>
+<li>接收窗口字段(16b)：用于流量控制，指示接收方愿意接受的字节数量。</li>
+<li>首部长度字段(4b)：用于指示以32比特的字为单位的TCP首部长度。</li>
+<li>可选与变长的选项字段：用于发送方与接收方协商最大报文长度(MSS)时，或在高速网络环境下用于窗口调节因子时使用。</li>
+<li>标志字段(8b)：<ul>
+<li>ACK：用于指示确认字段中的值是有效的。</li>
+<li>RST、SYN、FIN：用于连接的建立和拆除。</li>
+<li>CWR、ECE：用于明确拥塞通告。</li>
+<li>PSH：用于指示接收方应立即将数据交给上层。</li>
+<li>URG：用于指示报文段里存在着被发送端的上层实体置为紧急的数据。</li>
+</ul>
+</li>
+<li>紧急数据指针字段(16b)：当紧急数据存在，TCP必须通知接收端的上层实体。</li>
+</ol>
+<h3 id="序号和确认号"><a href="#序号和确认号" class="headerlink" title="序号和确认号"></a>序号和确认号</h3><p>TCP把数据看成无结构的、有序的字节流。序号是建立在传送的字节流之上，而不是建立在传送的报文段的序列之上。</p>
+<p>假设主机A上一个进程想通过TCP连接向主机B上的一个进程发送一个数据流，主机A中的TCP隐式的对数据流中的每一个字节编号。假定数据流由一个包含1000字节的文件组成，其MSS为100字节。TCP将为该数据流构建10个报文段，第一个报文段的序号是0，第二个报文段的序号是100，以此类推。每一个序号被填入到相应的TCP报文段中（这里我们假设了初始序号为0，但实际上TCP连接的双方可以随机选取初始序号，这样做可以减少仍在网络中存在的两台主机之间先前已经终止的连接的报文段误认为是后来这两台主机之间新建连接所产生的有效报文段的可能性）。</p>
+<p>主机A填充进报文段的确认号是主机A期望从主机B接收到的下一字节的序号。</p>
+<p>假设主机A已收到一个来自主机B的包含字节0-535的报文段，以及另一个包含字节900-1000的报文段，由于某种原因，主机A还没有收到字节536-899的报文段。在这个例子中，主机A为了重构主机B的数据流，仍在等待字节536及其后面的字节。因为A到B的下一个报文段将在确认号字段中包含536。因为TCP值确认该流中到第一个丢失字节为止的字节，所以TCP被称为提供累积确认。</p>
+<p>考虑这个例子中第三个报文段先于第二个报文段失序到达，对于失序报文段TCP并没有明确规定处理方式，而是留给TCP的编程人员处理。处理方式：①接收方立即丢弃失序报文段；②接收方保留失序字节，并等待缺少的字节以填补该间隔。后一种方式是实践中采用的方法。</p>
+<h2 id="RTT的估计与超时"><a href="#RTT的估计与超时" class="headerlink" title="RTT的估计与超时"></a>RTT的估计与超时</h2><p>TCP采用超时/重传机制来处理报文段的丢失问题，超时时间间隔必须大于该连接的往返时间(RTT)，否则会造成不必要的重传。</p>
+<p>报文段的样本RTT（SampleRTT）就是从某报文段被发出到对该报文段的确认被收到之间的时间量，由于路由器的拥塞和端系统负载的变化，这些报文段的SampleRTT的值会随之波动。TCP维持了一个SampleRTT均值（EstimatedRTT），一旦获得一个新的SampleRTT时，TCP就会更新EstimatedRTT。</p>
+<p>RTT偏差（DevRTT）用于估算SampleRTT一般会偏离EstimatedRTT的程度。</p>
+<p>超时时间间隔应该大于EstimatedRTT，否则会造成不必要的重传，但也不能比EstimatedRTT大太多，否则会导致数据传输时延大。因此当SampleRTT的波动较大时，加上的余量应该大一些，反之则小一些，这时就需要DevRTT了。</p>
+<p>推荐的初始TimeoutInterval值为1秒，当出现超时后，TimeoutInterval值将加倍，然而只要收到报文段并更新EstimatedRTT，就重新计算TimeoutInterval。</p>
+<h2 id="可靠数据传输"><a href="#可靠数据传输" class="headerlink" title="可靠数据传输"></a>可靠数据传输</h2><p>在之前讲述可靠数据传输时，假定每一个已发送但未被确认的报文段都与一个定时器相关联，但定时器的管理却需要相当大的开销。因此推荐的定时器管理过程仅使用单一的重传定时器，即使有多个已发送但还未被确认的报文段。TCP协议遵循了这种单一定时器的推荐。</p>
+<p>TCP发送方有3个与发送和重传有关的主要事件：①从上层应用接收数据；②定时器超时；③收到ACK。</p>
+<p>一旦①发生，TCP从应用程序接收数据，并封装在报文段中，并把该报文段交给网络层。如果定时器还没有为某些其他报文段而运行，则当报文段被传给网络层时，TCP就启动该定时器。（将定时器关联到最早的未被确认的报文段）。该定时器的过期时间间隔是TimeoutInterval。</p>
+<p>一旦②发生，TCP通过重传引起超时的报文段来响应超时事件，然后TCP重启定时器。</p>
+<p>一旦③发生，TCP将ACK的值y与它的SendBase（最早未被确认字节序号，即窗口开始）比较。y确认了字节编号在y之前的所有字节都以收到，如果y&gt;SendBase，则更新SendBase。如果当前有未被确认的报文段，TCP还要重启定时器。</p>
+<h3 id="超时间隔加倍"><a href="#超时间隔加倍" class="headerlink" title="超时间隔加倍"></a>超时间隔加倍</h3><p>TCP重传具有最小序号的还未被确认的报文段，每次重传都会将下一次的超时间隔设为先前值的两倍，直到再次<strong>收到ACK或收到上层应用的数据</strong>时会重新计算超时间隔。因此超时间隔在每次重传后会呈指数型增长。</p>
+<p>这种机制提供了一个形式受限的拥塞控制，定时器过期很可能是由网络拥塞引起的，在拥塞的时候如果持续重传分组，会使拥塞更加严重。相反TCP提供了更加文雅的方式，每个发送方的重传都是经过越来越长的时间间隔后进行的。</p>
+<h3 id="快速重传"><a href="#快速重传" class="headerlink" title="快速重传"></a>快速重传</h3><p>超时触发重传的问题之一超时周期可能相对较长。幸运的是发送方通常可在超时发生之前通过冗余ACK来较好的检测到丢包的情况。冗余ACK就是再次确认某个报文段的ACK，而发送方先前已经受到对该报文段的确认。</p>
+<p>TCP不使用否定确认，只是对已经接受到的最后一个按序字节进行重复确认，即产生一个冗余ACK。如果TCP发送方接收到对相同数据的3个冗余ACK，说明跟在这个已经被确认过3次的报文段之后的报文段已经丢失。一但收到3个冗余ACK，TCP就执行快速重传，即在该报文段的<strong>定时器过期之前重传</strong>丢失的报文段。</p>
+<h3 id="GNB-or-SR"><a href="#GNB-or-SR" class="headerlink" title="GNB or SR ?"></a>GNB or SR ?</h3><p>TCP确认是累积式的，正确接收但失序的报文段是不会被接收方逐个确认的。因此TCP发送方仅需维持已发送过但未被确认的字节的最小序号和下一个要发送的字节的序号，不同于GBN的是TCP会将正确接收但失序的报文段缓存起来。</p>
+<p>对TCP提出的一种修改意见是所谓的<strong>选择确认</strong>，允许TCP接收方有选择的确认失序报文段，而不会累积的确认最后一个正确接收的有序报文段，当该机制与选择重传机制结合起来使用时，TCP就看起来很像SR协议。因此TCP的差错机制可以看做GBN和SR的混合体。</p>
+<h2 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h2><p>TCP连接的两端都为该连接设置了接收缓存，当TCP收到正确按序的字节后，就将数据放入接收缓存。相关联的应用程序从缓存中读取数据。事实上应用程序也许正忙于其他任务，如果应用程序读数据相对缓慢，而发送方发送的数据太多太快，就会很容易的导致接收缓存溢出。</p>
+<p>TCP为了解决该问题提供了流量控制服务。流量控制是一个速度匹配服务，即发送方的发送速率与接收方的接收速率相匹配。为了易于理解我们假设TCP接收方会丢弃失序报文段。</p>
+<p>通过让发送方维护一个<strong>接收窗口</strong>的变量来提供流量控制。接收窗口用于告知发送方该接收方还有多少可以的缓存空间。</p>
+<p>假设主机A通过一条TCP连接向主机B发送一个大文件，主机B为该连接分配了一个接收缓存，用RcvBuffer表示其大小。主机B上的应用进程不时从该缓存读取数据。</p>
+<p>定义有如下变量。</p>
+<ul>
+<li>LastByteRead：主机B上的应用程序从缓存读出的数据流的最后一个字节的编号。</li>
+<li>LastByteRcvd：从网络到达的并且已放入主机B接收缓存中的数据流的最后一个字节的编号。</li>
+<li>rwnd：接收窗口。</li>
+</ul>
+<p>rwnd = RcvBuffer - [LastByteRcvd - LastByteRead]</p>
+<p>主机B通过把当前的rwnd放入它发给主机A的报文段接收窗口字段中，通知主机A它在该连接的缓存中还有多少可用空间。</p>
+<p>LastByteRcvd - LastByteRead就是主机A发送到连接中但是未被确认的数据量。通过将该值控制在rwnd内，就可以保证主机A不会使主机B的接收缓存溢出，因此主机A在该连接的整个生命周期必须保证：LastByteRcvd - LastByteRead &lt;= rwnd。</p>
+<p>一个小问题是，当主机B发送了rwnd=0后，没有再发送新的报文段，接着主机B的接收缓存有空间，但是主机A不知道，即主机A被阻塞而不能再发送新数据。因此TCP规定：当主机B的接收窗口为0时，主机A继续发送只有一个字节数据的报文段，这些报文段将会被接收方确认。最后缓存开始清空，并且确认报文里将包含一个非0的rwnd值。</p>
+<p>UDP没有提供流量控制，因此接收方缓存可能会溢出，并且丢失报文段。</p>
+<h2 id="TCP连接管理"><a href="#TCP连接管理" class="headerlink" title="TCP连接管理"></a>TCP连接管理</h2><h3 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h3><p>第一步：客户端的TCP首先向服务端的TCP发送一个特殊的TCP报文段。该报文段不包含应用层数据。但是在报文段的首部SYN被置1.因此该特殊的报文段被称为<strong>SYN报文段</strong>。另外客户端会随机选择一个初始序号（client_isn），并将此编号放置于该起始的SYN报文段的序号中，该报文段会被分装在一个IP数据报中，并发送给服务器。</p>
+<p>第二步：一旦SYN报文段的IP数据到达服务器，服务器会为该TCP连接分配TCP缓存和变量，并向该客户TCP发送允许连接的报文段。这个允许连接的报文段也不包含应用层数据。但是首部包含3个重要信息：①SYN置1；②确认号置为client_isn+1；③服务器选择初始序号（server_isn），并放置到序号字段。该允许连接的报文段被称为<strong>SYNACK报文段</strong>。</p>
+<p>第三步：收到SYNACK报文段后，客户也要给该连接分配缓存和变量，客户主机向服务器发送另外一个报文段。这最后一个报文段对服务器的允许连接报文段进行了确认（确认号server_isn+1）。因为连接已经建立了，所以SYN置0。该报文段可以携带应用层数据。</p>
+<p>一旦完成这3个步骤，客户端和服务端就可以相互发送包括数据的报文段了。以后每一个报文段中，SYN都置0。</p>
+<h3 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h3><p>当连接结束后，主机中的缓存和变量将被释放。</p>
+<p>第一步：客户进程发出一个关闭连接命令，引起客户TCP向服务器进程发送一个特殊的TCP报文段，首部FIN置1。</p>
+<p>第二步：服务器接收FIN报文段后，会送一个确认报文段。</p>
+<p>第三步：服务器发送它自己的FIN报文段。</p>
+<p>第四步：客户对该服务器的FIN报文段进行确认。</p>
+<p>在一个TCP连接的生命周期内，运行在每台主机的TCP协议在各种<strong>TCP状态</strong>之间变迁。</p>
+<h3 id="TCP状态"><a href="#TCP状态" class="headerlink" title="TCP状态"></a>TCP状态</h3><p><strong>客户端：</strong></p>
+<p>客户TCP开始时处于CLOSED状态。发送SYN报文段后，客户TCP进入了SYN_SENT状态。收到SYNACK报文段后，客户TCP进入了ESTABLISHED状态，该状态下TCP客户就能发送和接收包含应用层数据的TCP报文段了。</p>
+<p>客户TCP发送FIN报文段，进入FIN_WAIT_1状态。收到确认报文段后进入FIN_WAIT_2状态。收到FIN报文段并确认后进入TIME_WAIT状态。假定ACK丢失，TIME_WAIT状态使客户TCP重传最后的确认报文。TIME_WAIT时间与具体实现有关，典型的值为30秒、1分钟或2分钟。经过等待后进入CLOSED状态，连接正式关闭，客户端所有资源（包括端口号）将被释放。</p>
+<p><strong>服务端：</strong></p>
+<p>服务TCP开始时处于CLOSED状态。创建监听套接字后处于LISTEN状态。接收SYN发送SYNACK后处于SYN_RCVD状态。接收ACK后处于ESTABLISHED状态。</p>
+<p>服务TCP接收FIN发送ACK后处于CLOSE_WAIT状态。发送FIN后处于LAST_ACK状态。接收ACK后处于CLOSED状态，连接正式关闭，服务端所有资源（包括端口号）将被释放。</p>
+<p>客户SYN发出后可能会接收到一个RST报文段（即RST标志位置1），表示当前服务端并没有运行在目的端口上的应用程序。当然客户也可能什么都收不到，这很可能表示SYN报文段被防火墙阻挡，无法到达目标主机。</p>
+<h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><p>拥塞控制通过遏制发送方来缓解IP网络拥塞。网络拥塞会导致路由器缓存溢出，接着导致分组重传。在最宽泛的级别上，我们可以根据网络层是否为运输层拥塞控制提供了显示帮助来区分拥塞控制方法。</p>
+<ol>
+<li>端到端拥塞控制：网络层没有为运输层拥塞控制提供显示支持，即使网络中存在拥塞，端系统也必须通过对网络行为的观察（如分组丢失与时延）来推断。<strong>TCP采用端到端的方法解决拥塞控制</strong>，因为IP层不会向端系统提供有关网络拥塞的反馈信息。TCP报文段的丢失（超时或3次冗余ACK）被认为是网络拥塞的迹象，TCP会相应的减小其窗口长度。</li>
+<li>网络辅助的拥塞控制：路由器向发送方提供关于网络中拥塞状态的显示反馈信息。这种反馈可以简单的用一个比特来指示链路中的拥塞情况。</li>
+</ol>
+<p>TCP的一个关键部分是可靠传输，另一个关键部分就是拥塞控制。</p>
+<p>TCP让每一个发送方根据感知到的网络拥塞程度在限制其能向连接发送流量的速率，如果一个TCP发送方感知从它到目的地之间的路劲上没有什么拥塞，则TCP发送方增加其发送速率。反之则降低其发送速率。</p>
+<p>三个问题：①如何限制发送速率；②如何感知网络拥塞；③如何确定发送速率。</p>
+<p>对于①，TCP连接的每一端都是由一个接收缓存，一个发送缓存和几个变量（LastByteRead、rwnd等）组成。运行在发送方的TCP拥塞控制机制跟踪一个额外的变量，即<strong>拥塞窗口</strong>，表示为cwnd，它对一个发送方能向网络中发送流量的速率进行了限制。</p>
+<p>LastByteSent - LastByteAcked(发送方未被确认的数据量) &lt;= min(cwnd, rwnd)</p>
+<p>对于②，定义TCP发送方丢包事件为超时或收到3个冗余ACK，当发生丢包事件时，发送方就认为路径上出现了拥塞。</p>
+<p>对于③，一个丢失的报文段意味着拥塞，因此当丢失报文段时应降低TCP发送方的速率；一个确认报文段指示该网络正向接收方交付发送方的报文段，因此当对先前未确认报文段的确认到达时，能够增加发送方的速率。</p>
+<h3 id="TCP拥塞控制算法"><a href="#TCP拥塞控制算法" class="headerlink" title="TCP拥塞控制算法"></a>TCP拥塞控制算法</h3><p>该算法包含三个主要部分：①慢启动；②拥塞避免；③快速恢复。慢启动和拥塞避免是TCP的强制部分，两者的差异在于对于收到的ACK做出反应时增加cwnd的长度，慢启动比拥塞避免能更快的增加cwnd的长度。快速恢复是推荐部分，对TCP发送方并非是必须的。</p>
+<p><strong>慢启动</strong></p>
+<p>当一条TCP连接开始时，cwnd的值通常初始置为一个MSS的较小值。在慢启动中，cwnd的值以1个MSS开始，并且每当传输的报文段首次被确认cwnd就翻一倍（增加一个MSS）。因此TCP发送速率起始慢，但在慢启动阶段以指数增长。从而以更快的速度找到合适的发送速率。</p>
+<p>那么何时结束指数增长？首先，如果存在一个由超时指示的丢包事件，TCP发送方另第二个状态变量ssthresh=cwnd/2,再将cwnd置1并重新开始慢启动。慢启动结束的第二种方式是直接与ssthresh相关联，因为当检测到拥塞时ssthresh设为cwnd的一半，当到达或超过ssthresh时，就结束慢启动转到拥塞避免模式。进入拥塞避免模式后，TCP会更加谨慎的增加cwnd。最后一种方式是检测到三个冗余ACK，TCP执行快速重传并进入快速恢复状态。</p>
+<p><strong>拥塞避免</strong></p>
+<p>一旦进入拥塞避免，cwnd的值大约是上次遇到拥塞时值的一半，即距离拥塞并不遥远，在该状态下，每个RTT只将cwnd的值增加一个MSS（一个RTT可能有多个ACK，所以和慢启动不一样）。一种通用的方法是对于TCP发送方无论何时到达一个新的确认，都将cwnd增加一个MSS字节。</p>
+<p>何时结束线性增长？当出现超时时，cwnd的值被设置为一个MSS，ssthresh的值被更新为cwnd的值的一半。当收到3个冗余ACK，cwnd值减半，ssthresh记录为cwnd的一半。接下来进入快速恢复状态。</p>
+<p><strong>快速恢复</strong></p>
+<p>对于引起TCP进入快速恢复状态的报文段，对每个冗余的ACK，cwnd增加一个MSS，最终，当对丢失报文段的一个ACK到达时，降低cwnd进入拥塞避免状态。如果出现超时事件，快速恢复在执行如同在慢启动和拥塞避免中相同的动作后迁移到慢启动状态。当接收3个冗余ACK，cwnd被置为一个MSS，ssthresh置为cwnd的一半。</p>
+<p>综合来说这三个部分就是让cwnd尽量处于一个不拥塞状态的最大的值。TCP拥塞控制常常被称为<strong>加性增、乘性减（AIMD）</strong>。</p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>李素晴</li><li class="post-copyright-link"><strong>Post link: </strong><a href="http://lisuqing2020.github.io/2020/10/03/net/tcp/" title="tcp">http://lisuqing2020.github.io/2020/10/03/net/tcp/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/10/04/os/%E8%BF%9B%E7%A8%8B/" rel="prev" title="进程"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">进程</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/10/03/net/%E4%BC%A0%E8%BE%93%E5%B1%82/" rel="next" title="传输层"><span class="post-nav-text">传输层</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" target="_blank" rel="noopener" href="https://github.com/lisuqing2020/lisuqing2020.github.io/issues?q=is:issue+tcp">GitHub Issues</a></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":null,"appKey":null,"placeholder":"你看一晃两三年，匆匆又夏天","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"appid":"p14aECEQvrlk4brHLOn0nij4-gzGzoHsz","appkey":"J93LFcbKRj9xFjUo40L5y1sj","meta":["nick","mail","link"],"el":"#valine-container","lang":"en"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 李素晴</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.1.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.2.0</span></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="Search"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="Searching..." value=""></div><div id="local-search-result"></div></div></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>

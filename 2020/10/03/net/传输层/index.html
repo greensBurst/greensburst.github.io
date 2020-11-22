@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="李素晴"><meta name="copyright" content="李素晴"><meta name="generator" content="Hexo 5.1.1"><meta name="theme" content="hexo-theme-yun"><title>传输层 | Lisuqing's Personal Website</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.21/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_2138379_1l6ur2tg9f2.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/photo/icon.png"><link rel="mask-icon" href="/photo/icon.png" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"lisuqing2020.github.io","root":"/","title":"李素晴的日记","version":"1.2.0","mode":"time","copycode":true,"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script data-ad-client="ca-pub-9695375546022807" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><meta name="description" content="自顶向下方法第3章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="传输层">
+<meta property="og:url" content="http://lisuqing2020.github.io/2020/10/03/net/%E4%BC%A0%E8%BE%93%E5%B1%82/index.html">
+<meta property="og:site_name" content="Lisuqing&#39;s Personal Website">
+<meta property="og:description" content="自顶向下方法第3章">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-03T10:40:43.000Z">
+<meta property="article:modified_time" content="2020-10-03T10:40:43.000Z">
+<meta property="article:author" content="李素晴">
+<meta property="article:tag" content="tda">
+<meta name="twitter:card" content="summary"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="李素晴"><img width="96" loading="lazy" src="/photo/avatar.jpg" alt="李素晴"></a><div class="site-author-name"><a href="/about/">李素晴</a></div><a class="site-name" href="/about/site.html">Lisuqing's Personal Website</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">227</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder--line"></use></svg></span><span class="site-state-item-count">10</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag--line"></use></svg></span><span class="site-state-item-count">21</span></a></div><a class="site-state-item hty-icon-button" href="/about" title="留言板"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-clipboard-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1164919034&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/lisuqing2020" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:lisuqing2020@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://juejin.im/user/676954896099847" title="掘金" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-juejin"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://nobilta.github.io/" title="东农吴彦祖" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://happycpp.github.io/" title="渣王" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%E8%BF%90%E8%BE%93%E5%B1%82%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">如何理解运输层？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8-amp-%E5%A4%9A%E8%B7%AF%E5%88%86%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">多路复用&amp;多路分解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UDP"><span class="toc-number">3.</span> <span class="toc-text">UDP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="toc-number">4.</span> <span class="toc-text">可靠数据传输</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE"><span class="toc-number">5.</span> <span class="toc-text">流水线可靠数据传输协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9E%E9%80%80N%E6%AD%A5-GBN-%E5%8D%8F%E8%AE%AE"><span class="toc-number">5.1.</span> <span class="toc-text">回退N步(GBN)协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0"><span class="toc-number">5.2.</span> <span class="toc-text">选择重传</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E9%9D%A0%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93"><span class="toc-number">5.3.</span> <span class="toc-text">可靠机制总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP"><span class="toc-number">6.</span> <span class="toc-text">TCP</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://lisuqing2020.github.io/2020/10/03/net/%E4%BC%A0%E8%BE%93%E5%B1%82/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="李素晴"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Lisuqing's Personal Website"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">传输层</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-10-03 18:40:43" itemprop="dateCreated datePublished" datetime="2020-10-03T18:40:43+08:00">2020-10-03</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-category"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span> <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category" href="/categories/net/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">net</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag" href="/tags/tda/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">tda</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><p>自顶向下方法第3章</p>
+<a id="more"></a>
+
+<h2 id="如何理解运输层？"><a href="#如何理解运输层？" class="headerlink" title="如何理解运输层？"></a>如何理解运输层？</h2><p>现在考虑有两个家庭，H1和H2，两个家庭有12个孩子喜欢互相写信，H1家庭的孩子C1与H2家庭的孩子C2负责收集信件送到邮局，再从邮局拿信件分发给其他人。</p>
+<p>在这里例子中，应用层报文 = 信封上的字符、进程 = 孩子们、主机 = 家庭、运输层协议 = C1 and C2、网络层协议 = 邮政服务。</p>
+<p>运输层协议为运行在不同端系统上的应用进程之间提供了逻辑通信，并且运输层协议只工作在端系统中，在端系统中，运输层协议将来自应用进程的报文移动到网络边缘（网络层），反之亦然。</p>
+<p>运输层协议有UDP（用户数据报协议）和TCP（传输控制协议），负责将两个端系统间IP的交付服务扩展为运行在端系统上的两个进程之间的交付服务。</p>
+<p><strong>进程到进程的数据交付</strong>和<strong>差错检查</strong>是两种最低限度的运输层服务，也是UDP所能提供的仅有的两种服务。TCP在此基础上还提供了<strong>可靠数据传输</strong>和<strong>拥塞控制</strong>。</p>
+<h2 id="多路复用-amp-多路分解"><a href="#多路复用-amp-多路分解" class="headerlink" title="多路复用&amp;多路分解"></a>多路复用&amp;多路分解</h2><p>多路复用与多路分解就是将由网络层提供的主机到主机交付服务延伸到为运行在主机上的应用程序提供进程到进程的交付服务。</p>
+<p>当C1从邮递员处收到一批信件，并通过查看收信人名字而将信件亲手交给它的兄弟姐妹时，执行的就是多路分解操作；当C2从兄弟姐妹那里收集信件并交给邮递员时，执行的就是多路复用操作。</p>
+<p>一个进程有一个或多个套接字，在接收主机中的运输层实际上并没有将数据直接交付给进程，而是将数据交给了一个中间的套接字。任意时刻，接受主机上可能有不止一个套接字，所以每个套接字都有一个唯一的标识符，标识符的格式取决于TCP还是UDP。</p>
+<p>将运输层报文段中的数据交付到正确的套接字的工作称为<strong>多路分解</strong>，在源主机从不同的套接字中收集数据块，并为每个数据块封装上首部信息从而生成报文段，然后将报文段传递到网络层，所有这些工作称为<strong>多路复用</strong>。</p>
+<p>UDP套接字是由一个二元组全面标识的，该二元组包含一个目的IP地址和一个目的端口号。TCP套接字是由一个四元组（源IP地址、源端口号、目的IP地址、目的端口号）来标识的。</p>
+<h2 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h2><p>UDP首部有4个字段（源端口号、目的端口号、长度、检验和），每个字段占2个字节，长度指的是整个UDP报文段（首部+数据）的字节数，接收方使用检验和来检查在该报文段中是否出现了差错。</p>
+<p>虽然UDP提供差错检测，但它对差错恢复无能为力。UDP的某种实现只是丢弃受损的报文段，其他实现是将受损的报文段交给应用程序并给出警告。</p>
+<h2 id="可靠数据传输"><a href="#可靠数据传输" class="headerlink" title="可靠数据传输"></a>可靠数据传输</h2><p><strong>自动重传请求</strong>（ARQ）协议，通过控制报文使得接收方可以让发送方知道哪些内容被正确接收，哪些内容接收有误并因此需要重复。</p>
+<p>ARQ还需要差错检测（比特差错、检验和）、接收方反馈（肯定确认ACK、否定确认NAK）、重传三种协议来处理存在比特差错的情况。</p>
+<p><strong>停等协议</strong>：当发送方处于等待ACK或NAK的状态时，它不能从上层获得更多的数据，仅当接收到ACK并离开该状态时才能发生这样的事件。因此发送方将不会发送一块新数据，除非发送方确信接收方已正确接收当前分组。</p>
+<p>一个比较严重的问题是，ACK或NAK分组受损的可能，解决该问题的一个简单方法，是在数据分组中添加一新字段，让发送方对其数据分组编号，即将发送数据分组的序号放在该字段，于是接收方只需检查序号即可确定收到的分组是否一次重传。</p>
+<p>对于停等协议，发送方无法理解接收方的ACK/NAK时，就重传分组，接收方通过序号判断该分组是一个重传分组还是一个新分组。</p>
+<p>但是除了解决比特受损的问题外，我们还要考虑底层信道的丢包问题，即怎样检测丢包以及发生丢包后该做些什么？</p>
+<p>我们让发送方负责检测和恢复丢包工作，假设发送的分组丢失或者接收方ACK丢失，发送方收不到应当到来的接收方的响应，我们可以让发送方等待一个往返+分组处理的时延，但是这个时延在最坏情况下意味着发送方要等待很长时间。</p>
+<p>因此需要设置一个超时时间，如果在这个时间内没有收到ACK，则重传该分组，即使接收方已经收到了这个分组。这也就意味着在发送方到接收方的信道中引入了<strong>冗余数据分组</strong>。对于冗余数据分组，我们依旧可以通过上文的序号机制来处理。</p>
+<p>对于发送方来说，无论是一个数据分组丢失，还是一个ACK丢失，或者只是分组或ACK超时，都通过重传来解决，为了实现基于时间的重传机制，需要一个倒计数定时器：①每次发送一个分组（包括新分组和重传分组）时，启动一个定时器；②响应定时器中断；③终止定时器。</p>
+<p>通过检验和、序号、定时器、肯定和否定确认分组这些技术，我们得到了一个可靠数据传输协议，我们称之为rdt3.0或<strong>比特交替协议</strong>。</p>
+<h2 id="流水线可靠数据传输协议"><a href="#流水线可靠数据传输协议" class="headerlink" title="流水线可靠数据传输协议"></a>流水线可靠数据传输协议</h2><p>rdt3.0性能问题的核心在于其是一个停等协议，还有发送方和接收方的底层协议处理时间，以及可能出现在发送方与接收方之间的任何中间路由器的处理与排队时延。</p>
+<p>解决办法是不以停等的方式运行，允许发送方发送多个分组而无须等待确认，因为许多从发送方向接收方输送的分组可以被看成是填充到一条流水线中，因此这种技术被称之为<strong>流水线</strong>。</p>
+<ul>
+<li>必须增加序号范围，因为每个输送中的分组（不算重传）必须有一个唯一的序号，而且也许有多个在输送中的未确认报文。</li>
+<li>协议的发送方和接收方两端也许不得不缓存多个分组，发送方最低限度应当能缓冲那些已发送但没有确认的分组，接收方或许也需要缓存那些已正确接受的分组。</li>
+<li>所需序号范围和对缓冲的要求取决于数据传输协议如何处理丢失，损坏及延时过大的分组，解决流水线的差错恢复有两种基本方法：<strong>回退N步</strong>和<strong>选择重传</strong>。</li>
+</ul>
+<h3 id="回退N步-GBN-协议"><a href="#回退N步-GBN-协议" class="headerlink" title="回退N步(GBN)协议"></a>回退N步(GBN)协议</h3><p>GBN协议允许发送方发送多个分组，而不需等待确认，但也受限于在流水线中未确认的分组数不能超过某个最大允许数N。</p>
+<p>假设GBN协议的序号范围为0-K，那么该序号范围可以被划分为4段（已发送并被确认的分组、已发送但未被确认的分组、即将被发送的分组、不可使用的序号）。</p>
+<p>其中已发送但未被确认的分组与即将被发送的分组的长度为窗口长度N，随着协议的运行，该窗口在序号空间向前滑动，因此GBN协议也常被称为<strong>滑动窗口协议</strong>。</p>
+<p>一个分组的序号承载在分组首部的一个固定长度的字段中，如果该字段长k位，则序号范围[0, 2^k-1]，所有涉及序号的运算必须使用模2^k运算，因此序号空间可被看作是一个长度为2^k的环。</p>
+<p>GBN的发送方必须响应三种类型的事件。</p>
+<ul>
+<li>上层的调用。只有窗口未满才产生一个分组并发送，以及更新相应的变量。</li>
+<li>收到一个ACK。对序号为n的分组采用<strong>累积确认</strong>的方式，表明接收方已正确接收到序号为n及n之前的所有分组。</li>
+<li>超时事件。“回退n步”来源于出现丢失和时延过长分组时发送方的行为，如果超时，发送方重传所有已发送但还未被确认过的分组。</li>
+</ul>
+<p>GBN的接收方如果一个序号为n的分组被正确接收到，并且按序，则接收方为分组n发送一个ACK，并将该分组中的数据部分交付到上层。在所有其他情况下，接收方丢弃该分组，并为上一个按序接收的分组重新发送ACK。看上去丢弃一个正确接收但失序的分组有些愚蠢，但是接收方不需要缓存一个失序分组，因为这个被丢弃的分组会因为重传规则再次被发送方发送。</p>
+<h3 id="选择重传"><a href="#选择重传" class="headerlink" title="选择重传"></a>选择重传</h3><p>GBN协议允许发送多个分组，避免了停等协议中的信道利用率问题，但是在GBN协议中，单个分组的差错就能够引起大量分组的重传，许多分组根本没必要重传，随着差错率的增加，流水线可能会被这些不必要重传的分组充斥。</p>
+<p>选择重传（SR）协议通过让发送方仅重传怀疑在接收方出错的分组，从而避免不必要的重传。SR接收方将确认一个正确接收的分组而不管其是否有序，失序的分组将被缓存直到之前所有丢失分组（序号更小的分组）都被收到为止，此时才可以将一批分组按序交付给上层。</p>
+<p><strong>SR发送方动作：</strong></p>
+<ol>
+<li>从上层接收到数据后，SR发送发检查下一个可用于该分组的序号。如果序号位于窗口内，则打包数据发送。否则就像GBN一样缓存数据或者返回给上层以便以后传输。</li>
+<li>定时器再次被用来防止丢失分组，但现在对每个分组都要有其自己的逻辑定时器，因为超时发生后只发送单个分组。</li>
+<li>如果收到ACK，且分组序号在窗口内，则标记该分组为已接收。如果序号位于窗口开始，那么窗口右移到具有最小序号的未确认分组处，如果窗口移动了且有序号落在窗口的未发送分组，则发送这些分组。</li>
+</ol>
+<p><strong>SR接收方动作：</strong></p>
+<ol>
+<li>序号在窗口内的分组被正确接收，此时收到的分组落在接收方的窗口内，一个选择ACK回给发送方。如果该分组之前没收到过，则缓存该分组。如果该分组序号位于窗口开始，则该分组以及以前缓存的序号连续的分组交付给上层，接着窗口向右移动。</li>
+<li>上一个窗口内的分组被正确收到，需要产生一个ACK，即使该分组之前确认过。</li>
+<li>其他情况忽略该分组。</li>
+</ol>
+<p>对于序号空间的一个现实问题是，序号的范围是有限的，这对接收方的问题就在于无法确定一个分组是新的分组还是重传的分组，因此对于SR协议窗口长度必须小于或等于最大序号的一半，这样才不会在连续的两个窗口内出现拥有同一个序号的分组。</p>
+<h3 id="可靠机制总结"><a href="#可靠机制总结" class="headerlink" title="可靠机制总结"></a>可靠机制总结</h3><ul>
+<li>检验和：用于检测在一个传输分组中的比特错误。</li>
+<li>定时器：用于超时重传，数据分组超时，或者ACK分组超时（接收方会有冗余副本）。</li>
+<li>序号：为发送的分组按序编号，接收分组序号间的空隙使得接收方可以检测出丢失的分组，具有相同序号的分组可以使接收方检测出一个分组的冗余副本。</li>
+<li>确认：接收方用于告诉发送方一个分组或一组分组已被正确的接收到了。确认报文通常携带着被确认的分组或多个分组的序号。确认可以逐个或累积，取决于协议的类型。</li>
+<li>否定确认：接收方用于告诉发送方一个分组或一组分组未被正确的接收。否定确认报文通常携带着未被正确接收的分组的序号。</li>
+<li>窗口、流水线：发送方也许被限制仅发送那些序号落在一个指定范围内的分组。窗口长度可以根据接收方接收和缓存报文的能力、网络中的拥塞程度或两者情况来设置。</li>
+</ul>
+<h2 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h2><p>TCP是因特网运输层面向连接的可靠地运输协议，为了提供可靠数据传输，依赖于上文讲述的可靠数据传输的原理，其中包括差错检测、重传、累积确认、定时器以及用于序号和确认号的首部字段。</p>
+<p>TCP复杂且重要，为了避免文章过长，会另起一篇新文章具体讲述TCP。</p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>李素晴</li><li class="post-copyright-link"><strong>Post link: </strong><a href="http://lisuqing2020.github.io/2020/10/03/net/%E4%BC%A0%E8%BE%93%E5%B1%82/" title="传输层">http://lisuqing2020.github.io/2020/10/03/net/%E4%BC%A0%E8%BE%93%E5%B1%82/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/10/03/net/tcp/" rel="prev" title="tcp"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">tcp</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/09/28/os/system-call/" rel="next" title="system call"><span class="post-nav-text">system call</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" target="_blank" rel="noopener" href="https://github.com/lisuqing2020/lisuqing2020.github.io/issues?q=is:issue+传输层">GitHub Issues</a></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":null,"appKey":null,"placeholder":"你看一晃两三年，匆匆又夏天","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"appid":"p14aECEQvrlk4brHLOn0nij4-gzGzoHsz","appkey":"J93LFcbKRj9xFjUo40L5y1sj","meta":["nick","mail","link"],"el":"#valine-container","lang":"en"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 李素晴</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.1.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.2.0</span></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="Search"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="Searching..." value=""></div><div id="local-search-result"></div></div></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>

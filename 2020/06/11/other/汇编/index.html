@@ -1,0 +1,434 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="李素晴"><meta name="copyright" content="李素晴"><meta name="generator" content="Hexo 5.1.1"><meta name="theme" content="hexo-theme-yun"><title>汇编笔记 | Lisuqing's Personal Website</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.21/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_2138379_1l6ur2tg9f2.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/photo/icon.png"><link rel="mask-icon" href="/photo/icon.png" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"lisuqing2020.github.io","root":"/","title":"李素晴的日记","version":"1.2.0","mode":"time","copycode":true,"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script data-ad-client="ca-pub-9695375546022807" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><meta name="description" content="1 汇编语言基础1.1 寄存器32位通用寄存器*8 EAX 累加器，用于算术、逻辑运算 EBX 基址寄存器，用于存放存储器地址，以方便指向变量或数组中的元素 ECX 计数器，用于循环操作等指令中的计数器 EDX 数据寄存器，用于存放数据 ESI 源变址寄存器，用于指向字符串或数组的源操作数 EDI 目的变址寄存器，用于指向字符串或数组中的目的操作数 EBP 基址指针寄存器，默认指向堆栈区域数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="汇编笔记">
+<meta property="og:url" content="http://lisuqing2020.github.io/2020/06/11/other/%E6%B1%87%E7%BC%96/index.html">
+<meta property="og:site_name" content="Lisuqing&#39;s Personal Website">
+<meta property="og:description" content="1 汇编语言基础1.1 寄存器32位通用寄存器*8 EAX 累加器，用于算术、逻辑运算 EBX 基址寄存器，用于存放存储器地址，以方便指向变量或数组中的元素 ECX 计数器，用于循环操作等指令中的计数器 EDX 数据寄存器，用于存放数据 ESI 源变址寄存器，用于指向字符串或数组的源操作数 EDI 目的变址寄存器，用于指向字符串或数组中的目的操作数 EBP 基址指针寄存器，默认指向堆栈区域数据">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-11T04:47:58.000Z">
+<meta property="article:modified_time" content="2020-11-22T05:30:19.374Z">
+<meta property="article:author" content="李素晴">
+<meta property="article:tag" content="assembly">
+<meta name="twitter:card" content="summary"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="李素晴"><img width="96" loading="lazy" src="/photo/avatar.jpg" alt="李素晴"></a><div class="site-author-name"><a href="/about/">李素晴</a></div><a class="site-name" href="/about/site.html">Lisuqing's Personal Website</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">227</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder--line"></use></svg></span><span class="site-state-item-count">10</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag--line"></use></svg></span><span class="site-state-item-count">21</span></a></div><a class="site-state-item hty-icon-button" href="/about" title="留言板"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-clipboard-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1164919034&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/lisuqing2020" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:lisuqing2020@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://juejin.im/user/676954896099847" title="掘金" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-juejin"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://nobilta.github.io/" title="东农吴彦祖" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://happycpp.github.io/" title="渣王" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">1 汇编语言基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#32%E4%BD%8D%E9%80%9A%E7%94%A8%E5%AF%84%E5%AD%98%E5%99%A8-8"><span class="toc-number">1.1.1.</span> <span class="toc-text">32位通用寄存器*8</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16%E4%BD%8D%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8-6"><span class="toc-number">1.1.2.</span> <span class="toc-text">16位段寄存器*6</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32%E4%BD%8D%E6%A0%87%E5%BF%97%E5%AF%84%E5%AD%98%E5%99%A8-1%EF%BC%888086%EF%BC%89"><span class="toc-number">1.1.3.</span> <span class="toc-text">32位标志寄存器*1（8086）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32%E4%BD%8D%E6%8C%87%E4%BB%A4%E6%8C%87%E9%92%88%E5%AF%84%E5%AD%98%E5%99%A8-1"><span class="toc-number">1.1.4.</span> <span class="toc-text">32位指令指针寄存器*1</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E5%AD%90%E7%A8%8B%E5%BA%8F%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 输入输出子程序库</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E9%80%9A%E7%94%A8%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%8C%87%E4%BB%A4"><span class="toc-number">2.</span> <span class="toc-text">2 通用数据处理指令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-1-%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E7%B1%BB%E6%8C%87%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">2.1 数据传送类指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-1-%E4%BC%A0%E9%80%81%E6%8C%87%E4%BB%A4-MOV"><span class="toc-number">3.0.1.</span> <span class="toc-text">2.1.1 传送指令 MOV</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-2-%E4%BA%A4%E6%8D%A2%E6%8C%87%E4%BB%A4-XCHG"><span class="toc-number">3.0.2.</span> <span class="toc-text">2.1.2 交换指令 XCHG</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-3-%E5%A0%86%E6%A0%88%E6%93%8D%E4%BD%9C%E6%8C%87%E4%BB%A4"><span class="toc-number">3.0.3.</span> <span class="toc-text">2.1.3 堆栈操作指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E6%A0%88%E6%8C%87%E4%BB%A4-PUSH"><span class="toc-number">3.0.3.1.</span> <span class="toc-text">进栈指令 PUSH</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BA%E6%A0%88%E6%8C%87%E4%BB%A4-POP"><span class="toc-number">3.0.3.2.</span> <span class="toc-text">出栈指令 POP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-4-EBP"><span class="toc-number">3.0.4.</span> <span class="toc-text">2.1.4 EBP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-5-%E5%85%B6%E4%BB%96%E4%BC%A0%E9%80%81%E6%8C%87%E4%BB%A4"><span class="toc-number">3.0.5.</span> <span class="toc-text">2.1.5 其他传送指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80%E4%BC%A0%E9%80%81%E6%8C%87%E4%BB%A4-LEA"><span class="toc-number">3.0.5.1.</span> <span class="toc-text">地址传送指令 LEA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%A2%E7%A0%81%E6%8C%87%E4%BB%A4-XLAT"><span class="toc-number">3.0.5.2.</span> <span class="toc-text">换码指令 XLAT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E5%BF%97%E4%BC%A0%E9%80%81%E6%8C%87%E4%BB%A4"><span class="toc-number">3.0.5.3.</span> <span class="toc-text">标志传送指令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E7%AE%97%E6%95%B0%E8%BF%90%E7%AE%97%E7%B1%BB%E6%8C%87%E4%BB%A4"><span class="toc-number">3.1.</span> <span class="toc-text">2.2 算数运算类指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-%E5%8A%A0%E6%B3%95%E6%8C%87%E4%BB%A4"><span class="toc-number">3.1.1.</span> <span class="toc-text">2.2.1 加法指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E6%B3%95%E6%8C%87%E4%BB%A4-ADD"><span class="toc-number">3.1.1.1.</span> <span class="toc-text">加法指令 ADD</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A6%E8%BF%9B%E4%BD%8D%E5%8A%A0%E6%B3%95%E6%8C%87%E4%BB%A4-ADC"><span class="toc-number">3.1.1.2.</span> <span class="toc-text">带进位加法指令 ADC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A2%9E%E9%87%8F%E6%8C%87%E4%BB%A4-INC"><span class="toc-number">3.1.1.3.</span> <span class="toc-text">增量指令 INC</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-%E5%87%8F%E6%B3%95%E6%8C%87%E4%BB%A4"><span class="toc-number">3.1.2.</span> <span class="toc-text">2.2.2 减法指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%8F%E6%B3%95%E6%8C%87%E4%BB%A4-SUB"><span class="toc-number">3.1.2.1.</span> <span class="toc-text">减法指令 SUB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A6%E5%80%9F%E4%BD%8D%E5%87%8F%E6%B3%95%E6%8C%87%E4%BB%A4-SBB"><span class="toc-number">3.1.2.2.</span> <span class="toc-text">带借位减法指令 SBB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%8F%E9%87%8F%E6%8C%87%E4%BB%A4-DEC"><span class="toc-number">3.1.2.3.</span> <span class="toc-text">减量指令 DEC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B1%82%E8%A1%A5%E6%8C%87%E4%BB%A4-NEG"><span class="toc-number">3.1.2.4.</span> <span class="toc-text">求补指令 NEG</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AF%94%E8%BE%83%E6%8C%87%E4%BB%A4-CMP"><span class="toc-number">3.1.2.5.</span> <span class="toc-text">比较指令 CMP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-3-%E4%B9%98%E9%99%A4%E6%B3%95%E6%8C%87%E4%BB%A4"><span class="toc-number">3.1.3.</span> <span class="toc-text">2.2.3 乘除法指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-4-%E5%85%B6%E4%BB%96%E8%BF%90%E7%AE%97%E6%8C%87%E4%BB%A4"><span class="toc-number">3.1.4.</span> <span class="toc-text">2.2.4 其他运算指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9B%B6%E4%BD%8D%E6%89%A9%E5%B1%95%E5%92%8C%E7%AC%A6%E5%8F%B7%E6%89%A9%E5%B1%95%E6%8C%87%E4%BB%A4"><span class="toc-number">3.1.4.1.</span> <span class="toc-text">零位扩展和符号扩展指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10%E8%BF%9B%E5%88%B6%E8%B0%83%E6%95%B4%E6%8C%87%E4%BB%A4"><span class="toc-number">3.1.4.2.</span> <span class="toc-text">10进制调整指令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E4%BD%8D%E6%93%8D%E4%BD%9C%E7%B1%BB%E6%8C%87%E4%BB%A4"><span class="toc-number">3.2.</span> <span class="toc-text">2.3 位操作类指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E6%8C%87%E4%BB%A4"><span class="toc-number">3.2.1.</span> <span class="toc-text">2.3.1 逻辑运算指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E4%B8%8E-AND"><span class="toc-number">3.2.1.1.</span> <span class="toc-text">逻辑与 AND</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E6%88%96-OR"><span class="toc-number">3.2.1.2.</span> <span class="toc-text">逻辑或 OR</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E9%9D%9E-NOT"><span class="toc-number">3.2.1.3.</span> <span class="toc-text">逻辑非 NOT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E5%BC%82%E6%88%96-XOR"><span class="toc-number">3.2.1.4.</span> <span class="toc-text">逻辑异或 XOR</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%8C%87%E4%BB%A4"><span class="toc-number">3.2.1.5.</span> <span class="toc-text">测试指令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-2-%E7%A7%BB%E4%BD%8D%E6%8C%87%E4%BB%A4"><span class="toc-number">3.2.2.</span> <span class="toc-text">2.3.2 移位指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A7%BB%E4%BD%8D%E6%8C%87%E4%BB%A4"><span class="toc-number">3.2.2.1.</span> <span class="toc-text">移位指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%E7%A7%BB%E4%BD%8D%E6%8C%87%E4%BB%A4"><span class="toc-number">3.2.2.2.</span> <span class="toc-text">循环移位指令</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84"><span class="toc-number">4.</span> <span class="toc-text">3 程序结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E5%88%86%E6%94%AF%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 分支程序结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-1-%E6%97%A0%E6%9D%A1%E4%BB%B6%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4-JMP"><span class="toc-number">4.1.1.</span> <span class="toc-text">3.1.1 无条件转移指令 JMP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-2-%E6%9D%A1%E4%BB%B6%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4-JCC"><span class="toc-number">4.1.2.</span> <span class="toc-text">3.1.2 条件转移指令 JCC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-%E5%BE%AA%E7%8E%AF%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 循环程序结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-1-%E5%BE%AA%E7%8E%AF%E6%8C%87%E4%BB%A4-LOOP"><span class="toc-number">4.2.1.</span> <span class="toc-text">3.2.1 循环指令 LOOP</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%841-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">5.</span> <span class="toc-text">附1 关键字</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%842-%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="toc-number">6.</span> <span class="toc-text">附2 程序示例</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://lisuqing2020.github.io/2020/06/11/other/%E6%B1%87%E7%BC%96/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="李素晴"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Lisuqing's Personal Website"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">汇编笔记</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-06-11 12:47:58" itemprop="dateCreated datePublished" datetime="2020-06-11T12:47:58+08:00">2020-06-11</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2020-11-22 13:30:19" itemprop="dateModified" datetime="2020-11-22T13:30:19+08:00">2020-11-22</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/assembly/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">assembly</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><a id="more"></a>
+
+<h1 id="1-汇编语言基础"><a href="#1-汇编语言基础" class="headerlink" title="1 汇编语言基础"></a>1 汇编语言基础</h1><h2 id="1-1-寄存器"><a href="#1-1-寄存器" class="headerlink" title="1.1 寄存器"></a>1.1 寄存器</h2><h3 id="32位通用寄存器-8"><a href="#32位通用寄存器-8" class="headerlink" title="32位通用寄存器*8"></a>32位通用寄存器*8</h3><ul>
+<li>EAX 累加器，用于算术、逻辑运算</li>
+<li>EBX 基址寄存器，用于存放存储器地址，以方便指向变量或数组中的元素</li>
+<li>ECX 计数器，用于循环操作等指令中的计数器</li>
+<li>EDX 数据寄存器，用于存放数据</li>
+<li>ESI 源变址寄存器，用于指向字符串或数组的源操作数</li>
+<li>EDI 目的变址寄存器，用于指向字符串或数组中的目的操作数</li>
+<li>EBP 基址指针寄存器，默认指向堆栈区域数据，主要用于在子程序中访问通过堆栈传递的参数和局部变量</li>
+<li>ESP 堆栈指针寄存器，专用于指向堆栈区域顶部数据，在涉及堆栈操作的指令中会自动增加或减少<h3 id="16位段寄存器-6"><a href="#16位段寄存器-6" class="headerlink" title="16位段寄存器*6"></a>16位段寄存器*6</h3></li>
+<li>CS 代码段寄存器</li>
+<li>SS 堆栈段寄存器</li>
+<li>DS 数据段寄存器</li>
+<li>ES 附加段寄存器，也是用于存放数据的数据段</li>
+<li>FS 数据段性质寄存器</li>
+<li>GS 数据段性质寄存器<h3 id="32位标志寄存器-1（8086）"><a href="#32位标志寄存器-1（8086）" class="headerlink" title="32位标志寄存器*1（8086）"></a>32位标志寄存器*1（8086）</h3>除了标志位目的操作数的标志传送指令外，其他传送指令并不影响标志</li>
+<li>状态标志<ul>
+<li>CF 进位标志：当无符号整数加减运算结果的最高有效位有进位或借位时，将CF置1</li>
+<li>PF 奇偶标志：反应运算结果最低字节中1的个数是奇是偶，偶数则置PF为1</li>
+<li>AF 调整标志：反应加减运算时最低半字节有无进位或借位，有则置AF为1，该标志位由CPU使用，用户不必关心</li>
+<li>ZF 零标志：反映运算结果是否为0，为0置ZF为1</li>
+<li>SF 符号标志：反应运算结果正负，最高位为1即负数则置SF为1</li>
+<li>OF 溢出标志：当有符号整数加减运算的结果超出范围，将OF置1，有符号数加减运算只有没有溢出时结果才是正确的。当两个相同符号数相加，而运算结果与原数据相反才会溢出，其他情况不会溢出</li>
+</ul>
+</li>
+<li>控制标志<ul>
+<li>DF 方向标志，仅用于串操作指令中，控制地址的变化方向</li>
+</ul>
+</li>
+<li>系统标志<ul>
+<li>TF 陷阱标志，用于控制处理器是否进入单步操作方式</li>
+<li>IF 中断允许标志，用于控制外部可屏蔽中断是否可以被处理器响应<h3 id="32位指令指针寄存器-1"><a href="#32位指令指针寄存器-1" class="headerlink" title="32位指令指针寄存器*1"></a>32位指令指针寄存器*1</h3></li>
+</ul>
+</li>
+<li>EIP 保存存储器地址，即将要执行的指令在主存中的位置，具有自动增量的能力，不能像通用寄存器一样直接修改</li>
+</ul>
+<h2 id="1-2-输入输出子程序库"><a href="#1-2-输入输出子程序库" class="headerlink" title="1.2 输入输出子程序库"></a>1.2 输入输出子程序库</h2><ul>
+<li>DISPCRLF printf(“\n”)</li>
+<li>DISPRD 显示8个通用寄存器内容</li>
+<li>DISPRF 显示6个状态标志状态</li>
+<li>DISPHD printf(“%x”, eax) 16进制显示</li>
+<li>DISPUID printf(“%u”, eax) 无符号10进制</li>
+<li>DISPSID printf(“%d”, eax) 有符号10进制</li>
+<li>READMSG scanf(“%s”, eax) EAX存地址，调用后地址存放字串，EAX存长度不含0</li>
+<li>READC scanf(“%c”, al) 调用后AL存字符ASCII码</li>
+<li>READHD scanf(“%x”, eax) 输入8位十六进制数据，存在EAX中</li>
+<li>READUID scanf(“%u”, eax) 输入无符号十进制整数，存在EAX中</li>
+<li>READSID scanf(“%d”, eax) 输入有符号十进制整数，存在EAX中</li>
+</ul>
+<h1 id="2-通用数据处理指令"><a href="#2-通用数据处理指令" class="headerlink" title="2 通用数据处理指令"></a>2 通用数据处理指令</h1><h1 id="2-1-数据传送类指令"><a href="#2-1-数据传送类指令" class="headerlink" title="2.1 数据传送类指令"></a>2.1 数据传送类指令</h1><h3 id="2-1-1-传送指令-MOV"><a href="#2-1-1-传送指令-MOV" class="headerlink" title="2.1.1 传送指令 MOV"></a>2.1.1 传送指令 MOV</h3><ul>
+<li>mov reg/mem, imm<ul>
+<li>mov eax, 200</li>
+<li>mov bvar, byte ptr 200</li>
+<li>mov [ebx], word ptr 200</li>
+</ul>
+</li>
+<li>mov reg/mem/seg, reg<ul>
+<li>mov eax, ebx</li>
+<li>mov bvar, al</li>
+<li>mov [ebx], cx</li>
+<li>mov ds, bx</li>
+</ul>
+</li>
+<li>mov reg/seg, mem<ul>
+<li>mov al, bvar</li>
+<li>moc dx, [ebx]</li>
+<li>mov edx, dvar[edi]</li>
+<li>mov ds, wvar</li>
+</ul>
+</li>
+<li>mov r16/m16, seg<ul>
+<li>mov ax, ds</li>
+<li>mov wvar, ds</li>
+<li>mov [ebx], ss</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-1-2-交换指令-XCHG"><a href="#2-1-2-交换指令-XCHG" class="headerlink" title="2.1.2 交换指令 XCHG"></a>2.1.2 交换指令 XCHG</h3><ul>
+<li>XCHG reg, reg/mem</li>
+<li>XCHG reg/mem, reg</li>
+</ul>
+<h3 id="2-1-3-堆栈操作指令"><a href="#2-1-3-堆栈操作指令" class="headerlink" title="2.1.3 堆栈操作指令"></a>2.1.3 堆栈操作指令</h3><p>栈底对应高地址，栈顶对应低地址</p>
+<h4 id="进栈指令-PUSH"><a href="#进栈指令-PUSH" class="headerlink" title="进栈指令 PUSH"></a>进栈指令 PUSH</h4><ul>
+<li>PUSH r16/m16/i16/seg</li>
+<li>PUSH r32/m32/i32</li>
+</ul>
+<h4 id="出栈指令-POP"><a href="#出栈指令-POP" class="headerlink" title="出栈指令 POP"></a>出栈指令 POP</h4><ul>
+<li>POP r16/m16/seg</li>
+<li>POP r32/m32</li>
+</ul>
+<h3 id="2-1-4-EBP"><a href="#2-1-4-EBP" class="headerlink" title="2.1.4 EBP"></a>2.1.4 EBP</h3><p>既然堆栈是利用主存实现的，我们当然就能以随机存取方式读写其中的数据，通用寄存器之一的堆栈基址指针EBP就是出于这个目的而设计的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov ebp, esp</span><br><span class="line">mov eax, [ebp+8]	;EAX&#x3D;SS:[EBP+8] EBP默认与堆栈段配合</span><br><span class="line">mov [ebp], eax		;SS:[EBP]&#x3D;EAX</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-1-5-其他传送指令"><a href="#2-1-5-其他传送指令" class="headerlink" title="2.1.5 其他传送指令"></a>2.1.5 其他传送指令</h3><h4 id="地址传送指令-LEA"><a href="#地址传送指令-LEA" class="headerlink" title="地址传送指令 LEA"></a>地址传送指令 LEA</h4><p>存储器操作数具有地址属性，利用地址传送指令可以获取其地址，其中最常用的是获取有效地址指令LEA，该指令在执行时计算偏移地址</p>
+<ul>
+<li>LEA r16/r32, mem</li>
+<li>LEA eax, [ebx+ecx] ;利用LEA实现加法操作</li>
+</ul>
+<h4 id="换码指令-XLAT"><a href="#换码指令-XLAT" class="headerlink" title="换码指令 XLAT"></a>换码指令 XLAT</h4><p>使用XLAT指令前，需要将EBX指向数据表首地址，并给AL赋值数据项的偏移量，执行的功能是将数据表该位置的数据取出赋值给AL，可以表达为AL=[EBX+AL]，默认使用DS数据段</p>
+<h4 id="标志传送指令"><a href="#标志传送指令" class="headerlink" title="标志传送指令"></a>标志传送指令</h4><ul>
+<li>CLC：复位进位标志，CF=0</li>
+<li>STC：置位进位标志，CF=1</li>
+<li>CMC：取反进位标志</li>
+<li>CLD：复位方向标志，DF=0，串操作后地址增大</li>
+<li>STD：置位方向标志，DF=1，串操作后地址减小</li>
+<li>CLI：复位中断标志，IF=0，禁止可屏蔽中断</li>
+<li>STI：置位中断标志，IF=1，允许可屏蔽中断</li>
+<li>LAHF：标志寄存器低字节内容传送到AH寄存器</li>
+<li>SAHF：AH寄存器内容传送到标志寄存器低字节</li>
+<li>PUSHF：标志寄存器低16位压入堆栈</li>
+<li>POPF：堆栈顶部一个字量数据弹出到标志寄存器低16位</li>
+<li>PUSHFD：32位标志寄存器全部内容压入堆栈</li>
+<li>POPFD：当前堆栈顶部一个双字数据弹出到标志寄存器</li>
+</ul>
+<h2 id="2-2-算数运算类指令"><a href="#2-2-算数运算类指令" class="headerlink" title="2.2 算数运算类指令"></a>2.2 算数运算类指令</h2><h3 id="2-2-1-加法指令"><a href="#2-2-1-加法指令" class="headerlink" title="2.2.1 加法指令"></a>2.2.1 加法指令</h3><h4 id="加法指令-ADD"><a href="#加法指令-ADD" class="headerlink" title="加法指令 ADD"></a>加法指令 ADD</h4><ul>
+<li>ADD reg, imm/reg/mem</li>
+<li>ADD mem, imm/reg</li>
+</ul>
+<h4 id="带进位加法指令-ADC"><a href="#带进位加法指令-ADC" class="headerlink" title="带进位加法指令 ADC"></a>带进位加法指令 ADC</h4><p>ADC除了完成ADD加法运算外，还要加上进位CF</p>
+<ul>
+<li>ADC reg, imm/reg/mem</li>
+<li>ADC mem, imm/reg</li>
+</ul>
+<h4 id="增量指令-INC"><a href="#增量指令-INC" class="headerlink" title="增量指令 INC"></a>增量指令 INC</h4><p>不影响CF，但影响其他状态标志位</p>
+<ul>
+<li>INC reg/mem</li>
+</ul>
+<h3 id="2-2-2-减法指令"><a href="#2-2-2-减法指令" class="headerlink" title="2.2.2 减法指令"></a>2.2.2 减法指令</h3><h4 id="减法指令-SUB"><a href="#减法指令-SUB" class="headerlink" title="减法指令 SUB"></a>减法指令 SUB</h4><ul>
+<li>SUB reg, imm/reg/mem</li>
+<li>SUB mem, imm/reg</li>
+</ul>
+<h4 id="带借位减法指令-SBB"><a href="#带借位减法指令-SBB" class="headerlink" title="带借位减法指令 SBB"></a>带借位减法指令 SBB</h4><p>SBB除了完成SUB减法运算外，还要减去借位CF,64位减法先减低32位，再减高32位</p>
+<ul>
+<li>SBB reg, imm/reg/mem</li>
+<li>SBB mem, imm/reg</li>
+</ul>
+<h4 id="减量指令-DEC"><a href="#减量指令-DEC" class="headerlink" title="减量指令 DEC"></a>减量指令 DEC</h4><p>不影响CF，但影响其他状态标志位</p>
+<ul>
+<li>DEC reg/mem</li>
+</ul>
+<h4 id="求补指令-NEG"><a href="#求补指令-NEG" class="headerlink" title="求补指令 NEG"></a>求补指令 NEG</h4><p>即用零减去操作数，结果返回操作数，与用0做减法的SUB指令一样，可用于对负数求补码或由负数补码求绝对值</p>
+<ul>
+<li>NEG reg/mem</li>
+</ul>
+<h4 id="比较指令-CMP"><a href="#比较指令-CMP" class="headerlink" title="比较指令 CMP"></a>比较指令 CMP</h4><p>使目的操作数减去源操作数，差值不回送到目的操作数，但按照减法结果影响状态标志</p>
+<ul>
+<li>CMP reg, imm/reg/mem</li>
+<li>CMP mem, imm/reg</li>
+</ul>
+<h3 id="2-2-3-乘除法指令"><a href="#2-2-3-乘除法指令" class="headerlink" title="2.2.3 乘除法指令"></a>2.2.3 乘除法指令</h3><p>IA-32乘除法需要区别有无符号，并隐含使用EAX和EDX，有点复杂而且好像不咋用乘除法这里没写，页数76</p>
+<h3 id="2-2-4-其他运算指令"><a href="#2-2-4-其他运算指令" class="headerlink" title="2.2.4 其他运算指令"></a>2.2.4 其他运算指令</h3><h4 id="零位扩展和符号扩展指令"><a href="#零位扩展和符号扩展指令" class="headerlink" title="零位扩展和符号扩展指令"></a>零位扩展和符号扩展指令</h4><p>位数增加，大小不变</p>
+<ul>
+<li>无符号数零位扩展 MOVZX 高位补0<ul>
+<li>MOVZX r16, r8/m8</li>
+<li>MOVZX r32, r8/m8/r16/m16</li>
+</ul>
+</li>
+<li>有符号数符号扩展 MOVSX<ul>
+<li>MOVSX r16, r8/m8</li>
+<li>MOVSX r32, r8/m8/r16/m16</li>
+</ul>
+</li>
+</ul>
+<h4 id="10进制调整指令"><a href="#10进制调整指令" class="headerlink" title="10进制调整指令"></a>10进制调整指令</h4><p>貌似不重要，连个例子都没有，页数79</p>
+<h2 id="2-3-位操作类指令"><a href="#2-3-位操作类指令" class="headerlink" title="2.3 位操作类指令"></a>2.3 位操作类指令</h2><h3 id="2-3-1-逻辑运算指令"><a href="#2-3-1-逻辑运算指令" class="headerlink" title="2.3.1 逻辑运算指令"></a>2.3.1 逻辑运算指令</h3><h4 id="逻辑与-AND"><a href="#逻辑与-AND" class="headerlink" title="逻辑与 AND"></a>逻辑与 AND</h4><p>结果返回到目的操作数，会设置CF=OF=0，影响SF，ZF，PF</p>
+<ul>
+<li>AND reg, imm/reg/mem</li>
+<li>AND mem, imm/reg</li>
+</ul>
+<h4 id="逻辑或-OR"><a href="#逻辑或-OR" class="headerlink" title="逻辑或 OR"></a>逻辑或 OR</h4><p>结果返回到目的操作数，会设置CF=OF=0，影响SF，ZF，PF</p>
+<ul>
+<li>OR reg, imm/reg/mem</li>
+<li>OR mem, imm/reg</li>
+</ul>
+<h4 id="逻辑非-NOT"><a href="#逻辑非-NOT" class="headerlink" title="逻辑非 NOT"></a>逻辑非 NOT</h4><p>不影响标志位</p>
+<ul>
+<li>NOT reg/mem</li>
+</ul>
+<h4 id="逻辑异或-XOR"><a href="#逻辑异或-XOR" class="headerlink" title="逻辑异或 XOR"></a>逻辑异或 XOR</h4><p>结果返回到目的操作数，会设置CF=OF=0，影响SF，ZF，PF，可用<code>XOR EAX,EAX</code>做清零运算</p>
+<ul>
+<li>XOR reg, imm/reg/mem</li>
+<li>XOR mem, imm/reg</li>
+</ul>
+<h4 id="测试指令"><a href="#测试指令" class="headerlink" title="测试指令"></a>测试指令</h4><p>将两个数进行逻辑与运算，但不返回到目的操作数</p>
+<ul>
+<li>TEST reg, imm/reg/mem</li>
+<li>TEST mem, imm/reg</li>
+</ul>
+<h3 id="2-3-2-移位指令"><a href="#2-3-2-移位指令" class="headerlink" title="2.3.2 移位指令"></a>2.3.2 移位指令</h3><h4 id="移位指令"><a href="#移位指令" class="headerlink" title="移位指令"></a>移位指令</h4><p>影响CF，SF，ZF，PF，如果移动一位，按照最高符号位是否改变设置OF，有改变则OF置1，移动次数大于1，OF不确定，逻辑移位可实现乘除2^N，余数由CF反应</p>
+<ul>
+<li>逻辑左移i8/CL位 SHL reg/mem, i8/CL 最低位补0，最高位进CF</li>
+<li>逻辑右移i8/CL位 SHR reg/mem, i8/CL 最高位补0，最低位进CF</li>
+<li>算数左移 SAL reg/mem, i8/CL 与SHL是同一条指令</li>
+<li>算数右移i8/CL位 SAR reg/mem, i8/CL 最高位不变，最低为进CF</li>
+</ul>
+<h4 id="循环移位指令"><a href="#循环移位指令" class="headerlink" title="循环移位指令"></a>循环移位指令</h4><p>从一端移出返回到另一端形成循环，影响CF，OF，OF和移位指令一样</p>
+<ul>
+<li>不带进位循环左移 ROL reg/mem, i8/CL 最高位进入CF和最低位</li>
+<li>不带进位循环右移 ROR reg/mem, i8/CL 最低位进入CF和最高位</li>
+<li>带进位循环左移 RCL reg/mem, i8/CL CF进入最低位，最高位进入CF</li>
+<li>带进位循环右移 RCR reg/mem, i8/CL CF进入最高位，最低位进入CF</li>
+</ul>
+<h1 id="3-程序结构"><a href="#3-程序结构" class="headerlink" title="3 程序结构"></a>3 程序结构</h1><h2 id="3-1-分支程序结构"><a href="#3-1-分支程序结构" class="headerlink" title="3.1 分支程序结构"></a>3.1 分支程序结构</h2><p>汇编语言需要首先利用比较CMP、测试TEST、加减运算、逻辑运算等影响状态标志的指令形成条件，然后利用条件转移指令判断由标志表达的条件，并根据标志状态控制程序转移到不同的程序段。</p>
+<h3 id="3-1-1-无条件转移指令-JMP"><a href="#3-1-1-无条件转移指令-JMP" class="headerlink" title="3.1.1 无条件转移指令 JMP"></a>3.1.1 无条件转移指令 JMP</h3><ul>
+<li>JMP label</li>
+<li>JMP r32/r16</li>
+<li>JMP m32/m16</li>
+<li>JMP m48/m32</li>
+</ul>
+<h3 id="3-1-2-条件转移指令-JCC"><a href="#3-1-2-条件转移指令-JCC" class="headerlink" title="3.1.2 条件转移指令 JCC"></a>3.1.2 条件转移指令 JCC</h3><p>为区别有符号数的大小关系，无符号数的大小关系用高低表示，他需要利用CF确定高低，利用ZF确定相等。两个无符号数据的高低分成四种关系，对应9-12条。判断有符号数的大小需要组合OF和SF标志，并利用ZF标志确定相等于否，两个有符号数的大小也分四种关系，对应13-16条。对于判断是否相等，无论有无符号都是用JZ/JE。</p>
+<ul>
+<li>JZ/JE ZF=1 等于零/相等</li>
+<li>JNZ/JNE ZF=0 不等于零/不相等</li>
+<li>JS SF=1 符号为负</li>
+<li>JNS SF=0 符号为负</li>
+<li>JP/JPE PF=1 1的个数为偶</li>
+<li>JNP/JPO PF=0 1的个数为奇</li>
+<li>JO OF=1 溢出</li>
+<li>JNO OF=0 无溢出</li>
+<li>JC/JB/JNAE CF=1 进位/低于/不高于等于</li>
+<li>JNC/JNB/JAE CF=0 无进位/不低于/高于等于</li>
+<li>JBE/JNA CF=1或ZF=1 低于等于/不高于</li>
+<li>JNBE/JA CF=0且ZF=1 不低于等于/高于</li>
+<li>JL/JNGE SF!=OF 小于/不大于等于</li>
+<li>JNL/JGE SF=OF 不小于/大于等于</li>
+<li>JLE/JNG SF!=OF或ZF=1 小于等于/不大于</li>
+<li>JNLE/JG SF=OF且ZF=0 不小于等于/大于</li>
+</ul>
+<h2 id="3-2-循环程序结构"><a href="#3-2-循环程序结构" class="headerlink" title="3.2 循环程序结构"></a>3.2 循环程序结构</h2><h3 id="3-2-1-循环指令-LOOP"><a href="#3-2-1-循环指令-LOOP" class="headerlink" title="3.2.1 循环指令 LOOP"></a>3.2.1 循环指令 LOOP</h3><ul>
+<li>LOOP label 执行ECX次循环</li>
+<li>JECXZ label ECX=0循环</li>
+</ul>
+<h1 id="附1-关键字"><a href="#附1-关键字" class="headerlink" title="附1 关键字"></a>附1 关键字</h1><table>
+<thead>
+<tr>
+<th align="center">符号</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">EQU</td>
+<td align="center">定义符号常量，不可重复</td>
+</tr>
+<tr>
+<td align="center">MOD</td>
+<td align="center">取余运算</td>
+</tr>
+<tr>
+<td align="center">DUP</td>
+<td align="center">复制操作符</td>
+</tr>
+<tr>
+<td align="center">BYTE</td>
+<td align="center">一个字节</td>
+</tr>
+<tr>
+<td align="center">WORD</td>
+<td align="center">两个字节</td>
+</tr>
+<tr>
+<td align="center">DWORD</td>
+<td align="center">四个字节</td>
+</tr>
+<tr>
+<td align="center">FWORD</td>
+<td align="center">六个字节</td>
+</tr>
+<tr>
+<td align="center">QWORD</td>
+<td align="center">八个字节</td>
+</tr>
+<tr>
+<td align="center">TBYTE</td>
+<td align="center">十个字节</td>
+</tr>
+<tr>
+<td align="center">ORG</td>
+<td align="center">将参数表达的偏移地址作为当前偏移地址</td>
+</tr>
+<tr>
+<td align="center">ALIGN</td>
+<td align="center">地址对齐</td>
+</tr>
+<tr>
+<td align="center">OFFSET</td>
+<td align="center">返回变量名所在段偏移地址</td>
+</tr>
+<tr>
+<td align="center">SEG</td>
+<td align="center">返回段基地址</td>
+</tr>
+<tr>
+<td align="center">TYPE</td>
+<td align="center">返回变量类型字节数</td>
+</tr>
+<tr>
+<td align="center">LENGTHOF</td>
+<td align="center">返回元素数</td>
+</tr>
+<tr>
+<td align="center">SIZEOF</td>
+<td align="center">返回变量所占字节数</td>
+</tr>
+<tr>
+<td align="center">NOP</td>
+<td align="center">空操作</td>
+</tr>
+<tr>
+<td align="center">CALL</td>
+<td align="center">子程序调用</td>
+</tr>
+<tr>
+<td align="center">RET</td>
+<td align="center">子程序返回</td>
+</tr>
+<tr>
+<td align="center">INT</td>
+<td align="center">中断调用</td>
+</tr>
+<tr>
+<td align="center">IRET</td>
+<td align="center">中断返回</td>
+</tr>
+<tr>
+<td align="center">PUSHAD</td>
+<td align="center">全部32位寄存器进栈</td>
+</tr>
+<tr>
+<td align="center">POPAD</td>
+<td align="center">全部32位寄存器出栈</td>
+</tr>
+<tr>
+<td align="center">PUSHA</td>
+<td align="center">全部16位寄存器进栈</td>
+</tr>
+<tr>
+<td align="center">POPA</td>
+<td align="center">全部16位寄存器出栈</td>
+</tr>
+<tr>
+<td align="center">CBW</td>
+<td align="center">AL符号扩展为AX</td>
+</tr>
+<tr>
+<td align="center">CWD</td>
+<td align="center">AX符号扩展为DX和AX</td>
+</tr>
+</tbody></table>
+<h1 id="附2-程序示例"><a href="#附2-程序示例" class="headerlink" title="附2 程序示例"></a>附2 程序示例</h1><ul>
+<li>双字变量大小端互换：65</li>
+<li>换码显示程序：69</li>
+<li>64位数据相加程序：73</li>
+<li>大小写字母转换程序：75</li>
+<li>温度转换程序：78</li>
+<li>移位指令实现乘法：83</li>
+<li>循环移位程序：84</li>
+<li>自然数求和程序：91</li>
+<li>处理器识别程序：92</li>
+<li>不同进制显示程序：92</li>
+<li>个数折半程序：97 JNC</li>
+<li>位测试程序：98 JZ</li>
+<li>奇校验程序：99 JNP</li>
+<li>数据比较程序：100</li>
+<li>求绝对值程序：101</li>
+<li>字母判断程序：102</li>
+<li>显示数据最高位程序：103</li>
+<li>有符号数运算溢出程序：104</li>
+<li>地址表程序：104 多分支</li>
+<li>数组求和程序：107 数组元素访问</li>
+<li>求最大值程序：109</li>
+<li>简单加密解密程序：110</li>
+<li>字符个数统计程序：111</li>
+<li>斐波那契数列程序：111</li>
+<li>冒泡排序：112</li>
+<li>字符剔除程序：113</li>
+<li>16进制显示程序：123</li>
+<li>有符号10进制显示程序：124</li>
+<li>二进制输入程序：126</li>
+<li>有符号10进制输入程序：127</li>
+<li>计算有符号数平均值程序：129</li>
+<li>状态标志显示程序：137</li>
+<li>通用寄存器显示程序：139</li>
+<li>ASCII表显示程序：142</li>
+</ul>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>李素晴</li><li class="post-copyright-link"><strong>Post link: </strong><a href="http://lisuqing2020.github.io/2020/06/11/other/%E6%B1%87%E7%BC%96/" title="汇编笔记">http://lisuqing2020.github.io/2020/06/11/other/%E6%B1%87%E7%BC%96/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/06/23/record/%E6%84%9F%E6%85%A8/" rel="prev" title="感慨"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">感慨</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/06/03/record/%E5%BC%80%E5%BF%83/" rel="next" title="开心"><span class="post-nav-text">开心</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" target="_blank" rel="noopener" href="https://github.com/lisuqing2020/lisuqing2020.github.io/issues?q=is:issue+汇编笔记">GitHub Issues</a></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":null,"appKey":null,"placeholder":"你看一晃两三年，匆匆又夏天","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"appid":"p14aECEQvrlk4brHLOn0nij4-gzGzoHsz","appkey":"J93LFcbKRj9xFjUo40L5y1sj","meta":["nick","mail","link"],"el":"#valine-container","lang":"en"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 李素晴</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.1.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.2.0</span></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="Search"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="Searching..." value=""></div><div id="local-search-result"></div></div></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>

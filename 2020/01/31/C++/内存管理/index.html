@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="李素晴"><meta name="copyright" content="李素晴"><meta name="generator" content="Hexo 5.1.1"><meta name="theme" content="hexo-theme-yun"><title>内存管理 | Lisuqing's Personal Website</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.21/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_2138379_1l6ur2tg9f2.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/photo/icon.png"><link rel="mask-icon" href="/photo/icon.png" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"lisuqing2020.github.io","root":"/","title":"李素晴的日记","version":"1.2.0","mode":"time","copycode":true,"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script data-ad-client="ca-pub-9695375546022807" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><meta name="description" content="内存管理主要掌握生命周期和内存布局，如果变量没有释放就可以用，释放了就不能用了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存管理">
+<meta property="og:url" content="http://lisuqing2020.github.io/2020/01/31/C++/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Lisuqing&#39;s Personal Website">
+<meta property="og:description" content="内存管理主要掌握生命周期和内存布局，如果变量没有释放就可以用，释放了就不能用了。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-31T04:20:45.000Z">
+<meta property="article:modified_time" content="2020-11-22T05:30:19.292Z">
+<meta property="article:author" content="李素晴">
+<meta name="twitter:card" content="summary"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="李素晴"><img width="96" loading="lazy" src="/photo/avatar.jpg" alt="李素晴"></a><div class="site-author-name"><a href="/about/">李素晴</a></div><a class="site-name" href="/about/site.html">Lisuqing's Personal Website</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">227</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder--line"></use></svg></span><span class="site-state-item-count">10</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag--line"></use></svg></span><span class="site-state-item-count">21</span></a></div><a class="site-state-item hty-icon-button" href="/about" title="留言板"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-clipboard-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1164919034&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/lisuqing2020" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:lisuqing2020@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://juejin.im/user/676954896099847" title="掘金" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-juejin"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://nobilta.github.io/" title="东农吴彦祖" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://happycpp.github.io/" title="渣王" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">一.作用域和声明周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">二.内存布局</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://lisuqing2020.github.io/2020/01/31/C++/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="李素晴"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Lisuqing's Personal Website"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">内存管理</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-01-31 12:20:45" itemprop="dateCreated datePublished" datetime="2020-01-31T12:20:45+08:00">2020-01-31</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2020-11-22 13:30:19" itemprop="dateModified" datetime="2020-11-22T13:30:19+08:00">2020-11-22</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-category"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span> <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category" href="/categories/C/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">C++</span></a></span></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><p>内存管理主要掌握生命周期和内存布局，如果变量没有释放就可以用，释放了就不能用了。</p>
+<a id="more"></a>
+
+<h3>一.作用域和声明周期</h3>
+
+<ol>
+<li><p><strong>普通的局部变量</strong></p>
+<ol>
+<li>在{}内部定义的变量就是局部变量。</li>
+<li>只有执行到定义变量的这个语句，系统才会给这个变量分配空间。</li>
+<li>当离开{}时自动释放。</li>
+<li>作用域在当前{}内。</li>
+<li>加不加auto关键字都是一样的。</li>
+<li>不初始化则值为随机数。</li>
+</ol>
+</li>
+<li><p><strong>static局部变量</strong></p>
+<ol>
+<li>在{}内部定义的变量就是局部变量。</li>
+<li>在编译阶段分配空间。</li>
+<li>离开{}不会释放，程序结束才释放。</li>
+<li>作用域在当前{}内。</li>
+<li>不初始化则值为零。</li>
+<li>初始化语句只会执行一次，但可以赋值多次。</li>
+<li>只能用常量初始化。</li>
+</ol>
+</li>
+<li><p><strong>普通全局变量</strong></p>
+<ol>
+<li><p>在函数外面定义的为全局变量。</p>
+</li>
+<li><p>如果使用变量前找不到定义，需要声明。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">extern</span> <span class="keyword">int</span> a;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,a);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> a = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>全局变量不初始化则值为零。</p>
+</li>
+<li><p>声明只针对普通全局变量。</p>
+</li>
+<li><p>所有文件中，普通全局变量只能定义一次，可以声明多次。</p>
+</li>
+<li><p>全局变量在编译阶段分配空间，程序结束释放。</p>
+</li>
+<li><p>多文件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.c</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>;	</span><br><span class="line">    <span class="comment">//也可以把声明写到头文件里，头文件中不能放定义，多个文件包含会重复定义</span></span><br><span class="line">    <span class="comment">//#program once表示一个文件包含n次头文件只有一次有效</span></span><br><span class="line">    test();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//test.c</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p><strong>static全局变量</strong></p>
+<ol>
+<li>在函数外面定义的为全局变量。</li>
+<li>static全局变量只在当前文件有效，同名static全局变量可以在多个文件定义。</li>
+<li>全局变量不初始化则值为零。</li>
+<li>全局变量在编译阶段分配空间，程序结束释放。</li>
+</ol>
+</li>
+</ol>
+<h3>二.内存布局</h3>
+
+<blockquote>
+<p>实际上的内存分段远不止这几个，这里拣重点说。</p>
+</blockquote>
+<ol>
+<li><p><strong>在程序没有执行前，有几个内存分区已经确定，但只有程序运行时才会加载内存，linux中可以使用<code>size *.out</code>查看。</strong></p>
+<ul>
+<li>text（代码区）：只读，放函数。</li>
+<li>data（全局初始化数据区/静态数据区）：初始化的数据，全局变量，static变量，常量（只读）。</li>
+<li>bss（未初始化数据区）：定义但未初始化的数据，全局变量，static变量。</li>
+</ul>
+</li>
+<li><p><strong>当程序运行时，加载内存，首先前面确定的内存分区（text，data，bss）先加载，然后额外加载两个区：</strong></p>
+<ul>
+<li>stack（栈区）：普通局部变量，自动管理内存，先进后出。</li>
+<li>heap（堆区）：手动申请空间，手动释放，整个程序结束，系统也会自动回收，如果没有手动释放，程序也没有结束，这个堆区空间不会自动释放。</li>
+</ul>
+</li>
+<li><p><strong>存储类型总结</strong></p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>作用域</th>
+<th>生命周期</th>
+<th>存储位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>auto变量</td>
+<td>{}内</td>
+<td>当前函数</td>
+<td>stack</td>
+</tr>
+<tr>
+<td>static局部变量</td>
+<td>{}内</td>
+<td>整个程序运行期</td>
+<td>data/bss</td>
+</tr>
+<tr>
+<td>extern变量</td>
+<td>整个程序</td>
+<td>整个程序运行期</td>
+<td>data/bss</td>
+</tr>
+<tr>
+<td>static全局变量</td>
+<td>当前文件</td>
+<td>整个程序运行期</td>
+<td>data/bss</td>
+</tr>
+<tr>
+<td>extern函数</td>
+<td>整个程序</td>
+<td>整个程序运行期</td>
+<td>text</td>
+</tr>
+<tr>
+<td>static函数</td>
+<td>当前文件</td>
+<td>整个程序运行期</td>
+<td>text</td>
+</tr>
+<tr>
+<td>register变量</td>
+<td>{}内</td>
+<td>当前函数</td>
+<td>运行时存储在cpu寄存器</td>
+</tr>
+<tr>
+<td>常量</td>
+<td>当前文件</td>
+<td>整个程序运行期</td>
+<td>data</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><strong>栈越界</strong></p>
+<p>Linux中可以用<code>ulimit -a</code>查看栈区多大</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a[<span class="number">100000000000000</span>] = &#123;<span class="number">0</span>&#125;;	<span class="comment">//很显然栈区存不下，越界导致段错误</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>内存操作函数</strong></p>
+<ol>
+<li><pre><code class="c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+void *memset(void *s,int c,size_t n);
+/*
+功能：将s的内存区的前n个字节以参数c填入
+参数：
+    s：需要操作内存s的首地址
+    c：填充的字符，类型虽然是int，但必须是unsigned char，范围0-2555
+    n：指定需要设置的大小
+返回值：s的首地址
+*/
+int main() &#123;
+    int a;
+    //主要就是用来清零
+    memset(&amp;a,0,sizeof(a));
+    printf(&quot;a = %d\n&quot;,a);    //&quot;a = 0&quot;
+
+    //中间参数虽然是整形，但是以字符处理
+    //每个字节都存的97，所以只能char单字节的读
+    memset(&amp;a,97,sizeof(a));
+    printf(&quot;a = %c\n&quot;,a);    //&quot;a = a&quot;
+
+    int b[10];
+    memset(b,0,sizeof(b));
+    memset(b,0,10 * sizeof(int));
+    return 0;
+&#125;
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2. &#96;&#96;&#96;c</span><br><span class="line">   #include &lt;stdio.h&gt;</span><br><span class="line">   #include &lt;string.h&gt;</span><br><span class="line">   void *memcpy(void *dest,const void *src,size_t n);</span><br><span class="line">   </span><br><span class="line">   int main() &#123;</span><br><span class="line">   	char p[] &#x3D; &quot;hello\0world&quot;;</span><br><span class="line">   	char buf[100];</span><br><span class="line">       printf(&quot;sizeof(p) &#x3D; %d\n&quot;,sizeof(p));</span><br><span class="line">       strncpy(buf,p,sizeof(p));</span><br><span class="line">       printf(&quot;buf1 &#x3D; %s\n&quot;,buf);</span><br><span class="line">       printf(&quot;buf2 &#x3D; %s\n&quot;,buf + strlen(&quot;hello&quot;) + 1);</span><br><span class="line">       &#x2F;*</span><br><span class="line">       sizeof(p) &#x3D; 12</span><br><span class="line">   	buf1 &#x3D; hello</span><br><span class="line">   	buf2 &#x3D;</span><br><span class="line">   	*&#x2F;</span><br><span class="line">       </span><br><span class="line">       memset(buf,0,sizeof(buf));</span><br><span class="line">       memcpy(buf,p,sizeof(p));</span><br><span class="line">       printf(&quot;buf1 &#x3D; %s\n&quot;,buf);</span><br><span class="line">       printf(&quot;buf2 &#x3D; %s\n&quot;,buf + strlen(&quot;hello&quot;) + 1);</span><br><span class="line">       &#x2F;*</span><br><span class="line">       buf1 &#x3D; hello</span><br><span class="line">   	buf2 &#x3D; world</span><br><span class="line">       *&#x2F;</span><br><span class="line">       return 0;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></code></pre>
+</li>
+<li><pre><code class="c">#include &lt;string.h&gt;
+int main() &#123;
+    int a[10] = &#123;1,2,3,4,5,6,7,8,9,10&#125;;
+    /*
+    使用memcpy()最好别出现内存重叠，如果出现最好使用memmove()
+    memcpy(&amp;a[2],a,5*sizeof(int));
+    */
+    memmove(&amp;a[2],a,5*sizeof(int));
+    return 0;
+&#125;
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">4. &#96;&#96;&#96;c</span><br><span class="line">   #include &lt;string.h&gt;</span><br><span class="line">   int main() &#123;</span><br><span class="line">       int a[5] &#x3D; &#123;1,2,3,4,5&#125;;</span><br><span class="line">       int b[5] &#x3D; &#123;1,2,3,4,6&#125;;</span><br><span class="line">       int flag &#x3D; memcmp(a,b,5*sizeof(int));</span><br><span class="line">       &#x2F;*</span><br><span class="line">       flag &lt; 0: a &lt; b;</span><br><span class="line">       flag &gt; 0: a &gt; b;</span><br><span class="line">       flag &#x3D; 0: a &#x3D; b;</span><br><span class="line">       *&#x2F;</span><br><span class="line">       return 0;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></code></pre>
+</li>
+</ol>
+</li>
+<li><p><strong>堆区内存分配和释放</strong></p>
+<p>指针指向堆区空间</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> *p = (<span class="keyword">int</span>*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">int</span>));	<span class="comment">//malloc分配堆区空间，成功返回void*，需要转int*，失败返回NULL</span></span><br><span class="line">    *p = <span class="number">10</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,*p);</span><br><span class="line">    <span class="keyword">if</span>(p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    	<span class="built_in">free</span>(p);	<span class="comment">//手动释放p指向的堆区空间，同一块内存只能释放一次，释放完就不能用了</span></span><br><span class="line">        p = <span class="literal">NULL</span>;	<span class="comment">//p的值还是原先的，需要设置为NULL</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上例中不手动释放程序结束也会回收内存，但如果是服务器上的程序是不会结束的，如果只分配不释放就会造成<code>内存泄露：动态分配了内存，不释放</code>,如果windows，andriod长期不关机，就会很卡，重启就好了也是这个原因。</p>
+<p>内存污染：非法操作内存，就是野指针。</p>
+</li>
+</ol>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>李素晴</li><li class="post-copyright-link"><strong>Post link: </strong><a href="http://lisuqing2020.github.io/2020/01/31/C++/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" title="内存管理">http://lisuqing2020.github.io/2020/01/31/C++/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/01/31/C++/%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="prev" title="知识点"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">知识点</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/01/31/C++/%E5%9F%BA%E7%A1%80/" rel="next" title="C基础"><span class="post-nav-text">C基础</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" target="_blank" rel="noopener" href="https://github.com/lisuqing2020/lisuqing2020.github.io/issues?q=is:issue+内存管理">GitHub Issues</a></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":null,"appKey":null,"placeholder":"你看一晃两三年，匆匆又夏天","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"appid":"p14aECEQvrlk4brHLOn0nij4-gzGzoHsz","appkey":"J93LFcbKRj9xFjUo40L5y1sj","meta":["nick","mail","link"],"el":"#valine-container","lang":"en"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 李素晴</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.1.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.2.0</span></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="Search"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="Searching..." value=""></div><div id="local-search-result"></div></div></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>

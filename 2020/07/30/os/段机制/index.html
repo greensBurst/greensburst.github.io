@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="李素晴"><meta name="copyright" content="李素晴"><meta name="generator" content="Hexo 5.1.1"><meta name="theme" content="hexo-theme-yun"><title>段机制 | Lisuqing's Personal Website</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.21/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_2138379_1l6ur2tg9f2.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/photo/icon.png"><link rel="mask-icon" href="/photo/icon.png" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"lisuqing2020.github.io","root":"/","title":"李素晴的日记","version":"1.2.0","mode":"time","copycode":true,"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script data-ad-client="ca-pub-9695375546022807" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><meta name="description" content="段机制的引入最初是为了解决x86-16体系中16位寄存器对20位地址线的寻址问题，但我们通常说的分段内存管理指的是保护模式下的段机制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="段机制">
+<meta property="og:url" content="http://lisuqing2020.github.io/2020/07/30/os/%E6%AE%B5%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="Lisuqing&#39;s Personal Website">
+<meta property="og:description" content="段机制的引入最初是为了解决x86-16体系中16位寄存器对20位地址线的寻址问题，但我们通常说的分段内存管理指的是保护模式下的段机制。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-30T09:21:38.000Z">
+<meta property="article:modified_time" content="2020-07-30T09:21:38.000Z">
+<meta property="article:author" content="李素晴">
+<meta name="twitter:card" content="summary"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="李素晴"><img width="96" loading="lazy" src="/photo/avatar.jpg" alt="李素晴"></a><div class="site-author-name"><a href="/about/">李素晴</a></div><a class="site-name" href="/about/site.html">Lisuqing's Personal Website</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">227</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder--line"></use></svg></span><span class="site-state-item-count">10</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag--line"></use></svg></span><span class="site-state-item-count">21</span></a></div><a class="site-state-item hty-icon-button" href="/about" title="留言板"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-clipboard-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1164919034&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/lisuqing2020" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:lisuqing2020@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://juejin.im/user/676954896099847" title="掘金" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-juejin"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://nobilta.github.io/" title="东农吴彦祖" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://happycpp.github.io/" title="渣王" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E6%A8%A1%E5%BC%8F%E5%92%8C%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">实模式和保护模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E6%AE%B5%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%BB%BC%E8%BF%B0"><span class="toc-number">2.</span> <span class="toc-text">分段内存管理综述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="toc-number">3.</span> <span class="toc-text">段描述符</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AE%B5%E9%80%89%E6%8B%A9%E5%AD%90"><span class="toc-number">4.</span> <span class="toc-text">段选择子</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%A8%E5%B1%80-%E5%B1%80%E9%83%A8%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8"><span class="toc-number">5.</span> <span class="toc-text">全局&#x2F;局部描述符表</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://lisuqing2020.github.io/2020/07/30/os/%E6%AE%B5%E6%9C%BA%E5%88%B6/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="李素晴"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Lisuqing's Personal Website"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">段机制</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-07-30 17:21:38" itemprop="dateCreated datePublished" datetime="2020-07-30T17:21:38+08:00">2020-07-30</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-category"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span> <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category" href="/categories/os/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">os</span></a></span></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><p>段机制的引入最初是为了解决x86-16体系中16位寄存器对20位地址线的寻址问题，但我们通常说的分段内存管理指的是保护模式下的段机制。</p>
+<a id="more"></a>
+
+<h1 id="实模式和保护模式"><a href="#实模式和保护模式" class="headerlink" title="实模式和保护模式"></a>实模式和保护模式</h1><p>x86-16体系中，寄存器16位，段寄存器16位，地址线20位，当cpu执行指令访问内存时，由于寄存器和地址线位数不匹配，物理地址通过段首地址和偏移地址得出。</p>
+<p>x86-32体系中，寄存器32位，段寄存器16位，地址线32位，寄存器与地址线位数相等，但是为了兼容x86-16，依旧需要支持段机制，所以引入了保护模式，之前的模式则称为实模式。</p>
+<p>在实模式中，物理地址(20位) = 段首地址(16位) &lt;&lt; 4 + 偏移地址(16位)，cpu具有1MB的寻址能力。段界限就是64KB(2^16)，因为IP寄存器是16位的。</p>
+<p>在保护模式中，cpu具有4GB的线性/物理地址空间寻址能力（线性地址空间由一维的线性地址构成，线性地址空间和物理地址空间对等，线性地址32位长，线性地址空间容量为4GB），段首地址(16位)只是一个索引，指向<strong>全局描述符表</strong>(Global Descriptor Table GDT)或<strong>局部描述符表</strong>(Local Descriptor Table LDT)的一个表项。</p>
+<blockquote>
+<p>保护模式下有两个段表，GDT和LDT，每一张段表可以包含8192(2^13)个段描述符，因此最多可以同时存在2*2^13=16384(2^14)个段，所以保护模式下可以访问64TB(16384*4GB)的逻辑地址空间。虽然保护模式下有很多段，逻辑地址空间看起来很大，但事实上并不能扩展物理地址空间，很大程度上各个段的地址空间是相互重叠的，目前所谓的64TB逻辑地址空间只是一个理论值，没有实际意义。在32位保护模式下，真正的物理空间仍然只有4GB那么大。</p>
+</blockquote>
+<h1 id="分段内存管理综述"><a href="#分段内存管理综述" class="headerlink" title="分段内存管理综述"></a>分段内存管理综述</h1><p>x86-32工作在保护模式时，可以使用全部32位地址线访问4GB物理地址空间，因为所有的通用寄存器都是32位的，所以用任何一个通用寄存器来间接寻址，不需要段机制就可以访问4G空间中的任意内存地址，但这并不意味着段寄存器没用了。</p>
+<p>实模式中将整个物理内存看成分段的区域（这些区域就称之为段Segment，编译器把源程序编译成执行程序时用到的代码段、数据段、堆和栈等概念在这里可以与段联系起来，二者在含义上是一致的），代码和数据位于不同区域，操作系统和用户程序并没有区别对待，而且每一个指针都指向实际的物理地址，这样，用户程序的指针如果指向了操作系统区域，或其他用户程序区域，并做出了修改操作，这对系统的安全性来讲是致命的。</p>
+<p>而在保护模式下，提供了4个特权级和完善的特权检查机制，既能实现资源共享又能保证代码数据的安全及任务的隔离。我们用64位长的数据表示保护模式下的段属性和段参数，我们把这个64位的数据成为<strong>段描述符</strong>，它包含三个成员：<strong>段基址</strong>、<strong>段界限</strong>、<strong>段属性</strong>。但是段寄存器是16位的，无法存储长达64位的段描述符。</p>
+<p>解决办法是将所有的段描述符顺序存储在内存的指定位置，组成一个段描述符表(Descriptor Table)，而段寄存器中的16位空间存储索引信息，此时段寄存器中的信息不再是段首地址，而是段选择子(Selector)，通过它可以在段描述符表中选择一个单位得到段的全部信息。</p>
+<p>那么段描述符表存放在哪里？x86-32引入了两个新的寄存器管理段描述符，就是GDTR和LDTR，用于存放段描述符表首地址。</p>
+<h1 id="段描述符"><a href="#段描述符" class="headerlink" title="段描述符"></a>段描述符</h1><p>在保护模式的分段内存管理机制下，每个段描述符占8字节，由如下三个参数定义：段基址(Base Address)、段界限(Limit)、段属性(Attributes)。</p>
+<p>段基址：规定<strong>线性空间中段的起始地址</strong>，在x86-32保护模式下，段基址长32位，因为段基址长度和地址线长度相等，所以任何一个段都可以从32位线性地址空间中的任何一个字节开始，而不像实模式下段基址必须是16的整数倍。</p>
+<p>段界限：规定<strong>段的大小</strong>，在x86-32保护模式下，段界限长20位，而且段界限的单位可以是B或4KB。</p>
+<p>段属性：规定<strong>段的各种属性</strong></p>
+<ol>
+<li><p>粒度位(Granularity)：用符号G表示。G=0表示段界限以B为单位，20位长的段界限可表示的范围是1B-1MB，增量为1B。G=1表示段界限以4KB为单位，20位长的段界限可表示的范围是4KB-4GB，增量为4KB。</p>
+</li>
+<li><p>类型(Type)：用于区别不同类型的段描述符，可表示该段是代码段还是数据段，是否可读、可写、可执行，段的扩展方向等。</p>
+</li>
+<li><p>描述符特权级(Descriptor Privilege Level DPL)：用来实现保护机制。</p>
+</li>
+<li><p>段存在位(Segment-Present bit)：若该位为0，则此段描述符是非法的，不能被用来实现地址转换。如果一个指向非法段描述符的段选择子被加载到段寄存器，cpu会立即产生异常。</p>
+</li>
+<li><p>已访问位(Accessed bit)：当处理器访问该段时（当一个指向该段描述符的段选择子被加载进一个段寄存器时），将自动设置访问位。操作系统可清楚该位。</p>
+</li>
+</ol>
+<h1 id="段选择子"><a href="#段选择子" class="headerlink" title="段选择子"></a>段选择子</h1><p>段选择子长16位，就是实模式下的段寄存器，由GDTR访问段描述符是通过段选择子完成的，段选择子包括三部分：<strong>描述符索引</strong>(Index)、<strong>表指示位</strong>(Table Indicator TI)、<strong>请求特权级</strong>(Requested Privilege Level RPL)。段选择子的Index部分表示所需要的段描述符在GDT中的位置，由这个位置再根据GDTR存储的表基址就可以找到相应的段描述符，然后用段描述符中的段基址加上逻辑地址的偏移量就可以转换为线性地址。段选择子可以作为指针变量的一部分，从而对程序员是可见的，但一般是由连接加载器来设置的。</p>
+<ol>
+<li><p>索引(高13位)：在描述符表的8192个描述符中选择一个，处理器自动将该索引值乘以8（描述符的长度），再加上表基址来索引描述符表，从而选出需要的段描述符。</p>
+</li>
+<li><p>表指示位(中1位)：选择应该访问哪一个描述符表，0代表访问GDT，1代表访问LDT。</p>
+</li>
+<li><p>请求特权级(低2位)：保护机制，代表选择子的特权级，分0、1、2、3四个特权级。任务中的每一个段都有一个特定的级别，每当一个程序试图访问一个段时，就将该程序拥有的特权级与要访问的段的特权级进行比较，已决定是否能访问该段。系统约定，cpu只能访问统一特权级或较低特权级的段。</p>
+</li>
+</ol>
+<p>全局描述符表的第一项是不能被cpu使用，所以当一个段选择子的索引和标志指示位都为0时，即段选择子指向GDT的第一项时，可以当作一个空的选择子，当一个指向空描述符的空选择子被加载到段寄存器时，处理器并不会产生一个异常，但是当用一个空选择子去访问内存时，则会产生异常。</p>
+<blockquote>
+<p>例子：给出逻辑地址 21H:12345678H 转换为线性地址。</p>
+<p>21H即选择子，就是段寄存器里面的值，21H = 0000 0000 0010 0001b，取高13位：0000000000100b = 4，取中1位：0，取低2位：01，代表选择GDT的第4个描述符，特权级为1。</p>
+<p>12345678H为逻辑地址偏移量，若GDT中第4个段描述符中的段基址为11111111H，则线性地址为11111111H + 12345678H = 23456789H。</p>
+<p>若只采用了段机制，无页机制，那么此时该线性地址即物理地址。</p>
+</blockquote>
+<h1 id="全局-局部描述符表"><a href="#全局-局部描述符表" class="headerlink" title="全局/局部描述符表"></a>全局/局部描述符表</h1><p>全局描述符表在整个系统中只有一张，GDT可以被存储在内存中的任何位置，cpu通过寄存器GDTR存放GDT入口地址，程序员将GDT设定在内存中的某个位置后，可以通过LGDT、SGDT指令将GDT入口地址加载、保存到GDTR寄存器，GDTR寄存器占48位，其中高32位存放GDT在内存中的基址，低32位存放表长界限，该界限单位为字节。在机器刚加电或处理器复位后，GDTR中的基地址被设置为0，表界限被设置为0xFFFF，所以在保护模式初始化过程中必须给GDTR加载一个新值。GDT中的第一个段描述符被设定为空段描述符。</p>
+<blockquote>
+<p>关于GDT的第一项为什么被设定为空？如果一个任务没有LDT，LDT选择子就指向GDT中的第一项，即空段描述符。</p>
+</blockquote>
+<p>局部描述符表在整个系统中可以由若干张，每个任务可以有一张。GDT和LDT的关系可以理解为：GDT为一级描述符表，LDT为二级描述符表。即GDT的项不再是段描述符，而是LDT描述符（LDT也可以看作一个段，自然也有对应的描述符）。LDTR间接记录LDT的入口地址，与GDTR不同的是，LDTR的内容是一个段选择子，该选择子指向GDT中的LDT描述符。LDTR在程序中可以通过LLDT随时改变。</p>
+<blockquote>
+<p>例子：若需要的段描述符在LDT2的第三个项，逻辑地址偏移量为12345678H。</p>
+<p>那么LDTR中的段选择子为：0000 0000 0001 0000b(Index = 2，TI = 0，RPL随意)。段寄存器中的段选择子为：0000 0000 0001 1100b(Index = 3，TI = 1，RPL随意)。</p>
+<p>LDT的入口地址不像GDT一样，不是由LDTR直接得到，而是由LDTR中的段选择子指向的GDT中的LDT描述符中的LDT段基址得到。</p>
+<p>由LDT的段选择子在GDT中选择出LDT描述符，由LDT描述符中的段基址(即LDT入口地址)可以找到LDT，由LDT和段寄存器中的段选择子得到的段描述符可以知道段基址，例如段基址为11111111H，则线性地址为11111111H + 12345678H = 23456789H。</p>
+<p>若只采用了段机制，无页机制，那么此时该线性地址即物理地址。</p>
+</blockquote>
+<p>由于每个进程都有一套自己的程序段，数据段、堆栈段、有了LDT则可以将每个进程的程序段、数据段、堆栈段封装在一起，只要改变LDTR就可以实现对不同进程的段进行访问（每个进程一个LDT，改变LDTR就可以在不同的LDT中切换，段寄存器保持不变，就可以访问不同进程的某一个段了）。</p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>李素晴</li><li class="post-copyright-link"><strong>Post link: </strong><a href="http://lisuqing2020.github.io/2020/07/30/os/%E6%AE%B5%E6%9C%BA%E5%88%B6/" title="段机制">http://lisuqing2020.github.io/2020/07/30/os/%E6%AE%B5%E6%9C%BA%E5%88%B6/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/07/31/os/%E7%89%B9%E6%9D%83%E7%BA%A7/" rel="prev" title="特权级"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">特权级</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/07/27/os/x86%E5%90%AF%E5%8A%A8/" rel="next" title="x86启动"><span class="post-nav-text">x86启动</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" target="_blank" rel="noopener" href="https://github.com/lisuqing2020/lisuqing2020.github.io/issues?q=is:issue+段机制">GitHub Issues</a></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":null,"appKey":null,"placeholder":"你看一晃两三年，匆匆又夏天","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"appid":"p14aECEQvrlk4brHLOn0nij4-gzGzoHsz","appkey":"J93LFcbKRj9xFjUo40L5y1sj","meta":["nick","mail","link"],"el":"#valine-container","lang":"en"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 李素晴</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.1.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.2.0</span></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="Search"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="Searching..." value=""></div><div id="local-search-result"></div></div></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>

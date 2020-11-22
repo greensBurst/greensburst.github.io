@@ -1,0 +1,305 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="李素晴"><meta name="copyright" content="李素晴"><meta name="generator" content="Hexo 5.1.1"><meta name="theme" content="hexo-theme-yun"><title>1.命令 | Lisuqing's Personal Website</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.21/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_2138379_1l6ur2tg9f2.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/photo/icon.png"><link rel="mask-icon" href="/photo/icon.png" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"lisuqing2020.github.io","root":"/","title":"李素晴的日记","version":"1.2.0","mode":"time","copycode":true,"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script data-ad-client="ca-pub-9695375546022807" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><meta name="description" content="开机，重启，登录，注销   shutdown shutdown -h now 立即关机 shutdown -h l 一分钟后关机 shutdown -r now 立即重启   halt 立即关机 reboot 立即重启 sync 把内存的数据同步到磁盘 logout 注销用户，init 3有效   用户管理   useradd name  添加用户，-d指定家目录，-g指定用户组 pass">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.命令">
+<meta property="og:url" content="http://lisuqing2020.github.io/2020/01/31/linux/1.%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="Lisuqing&#39;s Personal Website">
+<meta property="og:description" content="开机，重启，登录，注销   shutdown shutdown -h now 立即关机 shutdown -h l 一分钟后关机 shutdown -r now 立即重启   halt 立即关机 reboot 立即重启 sync 把内存的数据同步到磁盘 logout 注销用户，init 3有效   用户管理   useradd name  添加用户，-d指定家目录，-g指定用户组 pass">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-31T03:21:16.000Z">
+<meta property="article:modified_time" content="2020-11-22T05:30:19.352Z">
+<meta property="article:author" content="李素晴">
+<meta name="twitter:card" content="summary"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button sidebar-nav-active" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel sidebar-panel-active" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="李素晴"><img width="96" loading="lazy" src="/photo/avatar.jpg" alt="李素晴"></a><div class="site-author-name"><a href="/about/">李素晴</a></div><a class="site-name" href="/about/site.html">Lisuqing's Personal Website</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">227</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder--line"></use></svg></span><span class="site-state-item-count">10</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag--line"></use></svg></span><span class="site-state-item-count">21</span></a></div><a class="site-state-item hty-icon-button" href="/about" title="留言板"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-clipboard-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1164919034&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/lisuqing2020" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:lisuqing2020@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://juejin.im/user/676954896099847" title="掘金" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-juejin"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://nobilta.github.io/" title="东农吴彦祖" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://happycpp.github.io/" title="渣王" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content">This post does not have a Table of Contents</div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://lisuqing2020.github.io/2020/01/31/linux/1.%E5%91%BD%E4%BB%A4/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="李素晴"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Lisuqing's Personal Website"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">1.命令</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-01-31 11:21:16" itemprop="dateCreated datePublished" datetime="2020-01-31T11:21:16+08:00">2020-01-31</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2020-11-22 13:30:19" itemprop="dateModified" datetime="2020-11-22T13:30:19+08:00">2020-11-22</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-category"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span> <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category" href="/categories/linux/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">linux</span></a></span></span></div><div class="post-author"><span class="author-name">lisuqing</span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><a id="more"></a>
+
+
+<ol>
+<li><strong>开机，重启，登录，注销</strong></li>
+</ol>
+<ul>
+<li><code>shutdown</code><ul>
+<li><code>shutdown -h now</code> 立即关机</li>
+<li><code>shutdown -h l</code> 一分钟后关机</li>
+<li><code>shutdown -r now</code> 立即重启</li>
+</ul>
+</li>
+<li><code>halt</code> 立即关机</li>
+<li><code>reboot</code> 立即重启</li>
+<li><code>sync</code> 把内存的数据同步到磁盘</li>
+<li><code>logout</code> 注销用户，init 3有效</li>
+</ul>
+<ol start="2">
+<li><strong>用户管理</strong></li>
+</ol>
+<ul>
+<li><code>useradd name </code> 添加用户，-d指定家目录，-g指定用户组</li>
+<li><code>passwd name</code> 修改密码</li>
+<li><code>userdel name</code> 删除用户，-r删除家目录</li>
+<li><code>id name</code> 查询用户</li>
+<li><code>su - name</code> 切换用户，root先设密码</li>
+<li><code>exit</code> 退回上个用户</li>
+<li><code>groupadd name</code> 添加组</li>
+<li><code>groupdel name</code> 删除组</li>
+<li><code>/etc/passwd</code> 用户的配置文件</li>
+<li><code>/etc/shadow</code> 口令的配置文件</li>
+<li><code>etc/group</code> 组的配置文件</li>
+</ul>
+<ol start="3">
+<li><strong>运行级别</strong></li>
+</ol>
+<ul>
+<li><p>运行级别说明：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0	关机</span><br><span class="line">1	单用户【找回丢失密码】</span><br><span class="line">2	多用户无网络</span><br><span class="line">3	多用户有网络</span><br><span class="line">4	保留级别</span><br><span class="line">5	图形界面</span><br><span class="line">6	重启</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>init num</code> 切换运行级别</p>
+</li>
+<li><p>在开机按e可以设置启动时的级别，用单用户模式可以修改root密码，必须在真机上</p>
+</li>
+</ul>
+<ol start="4">
+<li><strong>帮助指令</strong></li>
+</ol>
+<ul>
+<li><code>command --help</code> 指定命令查询帮助信息</li>
+<li><code>man command</code> 获取命令帮助文档<ul>
+<li>卷1：命令的帮助信息</li>
+<li>卷2：系统调用（操作系统提供给上层应用的函数接口）的帮助信息</li>
+<li>卷3：库函数</li>
+<li>卷5：文件格式：如：/etc/passwd <code>man 5 passwd</code></li>
+</ul>
+</li>
+<li><code>help command</code> 获取命令帮助文档</li>
+</ul>
+<ol start="5">
+<li><strong>文件目录类</strong></li>
+</ol>
+<ul>
+<li><p><code>pwd</code> 显示当前目录绝对路径</p>
+</li>
+<li><p><code>ls</code> 查看当前目录有所内容</p>
+<ul>
+<li><code>-a</code> 显示所有文件和目录，包括隐藏的</li>
+<li><code>-d</code> 查看目录本身属性</li>
+<li><code>-F</code> 查看文件提示符 /目录 |管道 *可执行文件 =套接字</li>
+<li><code>-h</code> 人类可读</li>
+<li><code>-i</code> 查看文件inode 或使用stat，如：<code>stat filename</code></li>
+<li><code>-l</code> 以列表方式显示</li>
+<li>文件属性 硬链接计数 文件所有者 文件所有组 文件大小(默认单位字节，对于目录文件是实际占用磁盘存储的大小，4k的整数倍) 时间 文件名</li>
+</ul>
+</li>
+<li><p><code>cd</code> 切换目录,无参数切换到家目录</p>
+</li>
+<li><p><code>cd -</code> 切换到上一次的目录</p>
+</li>
+<li><p><code>mkdir</code> 创建目录</p>
+<ul>
+<li><code>-p</code> 创建多级目录</li>
+</ul>
+</li>
+<li><p><code>rmdir</code> 删除空目录</p>
+</li>
+<li><p><code>touch</code> 创建空文件</p>
+</li>
+<li><p><code>cp</code> 拷贝文件到指定目录</p>
+<ul>
+<li><code>-r</code> 递归复制整个文件夹</li>
+<li><code>-a</code> 递归并且保留文件原有属性，比如不会修改文件创建时间</li>
+<li><code>\cp</code> 强制覆盖不提示</li>
+</ul>
+</li>
+<li><p><code>rm</code> 删除文件或目录</p>
+<ul>
+<li><code>-r</code> 递归删除整个文件夹</li>
+<li><code>-f</code> 强制删除不提示</li>
+<li><code>-i</code> 提示是否删除</li>
+</ul>
+</li>
+<li><p><code>mv</code> 移动文件与目录或重命名</p>
+</li>
+<li><p><code>cat</code> 查看文件内容</p>
+<ul>
+<li><code>-n</code> 显示行号</li>
+<li><code>tac</code> 倒序显示文件内容</li>
+</ul>
+</li>
+<li><p><code>more</code> 全屏显示文件内容</p>
+<ul>
+<li>space向下翻一页</li>
+<li>enter向下翻一行</li>
+<li>q离开</li>
+<li>(ctrl+)f向下滚动一屏</li>
+<li>(ctrl+)b返回上一屏</li>
+<li>=输出当前行号</li>
+<li>:f输出文件名和当前行行号</li>
+</ul>
+</li>
+<li><p><code>less</code> 分屏查看文件内容，动态加载，对于显示大型文件效率较高</p>
+<ul>
+<li>space向下翻一页</li>
+<li>pagedown向下翻一页</li>
+<li>pageup向上翻一页</li>
+<li>/string向下寻找字串，n向下，N向上</li>
+<li>?string向上寻找字串，n向上，N向下</li>
+<li>q离开</li>
+</ul>
+</li>
+<li><p><code>&gt;</code> 输出重定向 <code>&gt;&gt;</code> 追加</p>
+<ul>
+<li>ls -l &gt; 123.txt</li>
+<li>cat 123.txt &gt; 456.txt</li>
+<li>echo 666 &gt; 789.txt</li>
+<li>cal &gt; rili.txt</li>
+</ul>
+</li>
+<li><p><code>echo</code> 输出内容到控制台</p>
+<ul>
+<li>echo $PATH 输出环境变量</li>
+</ul>
+</li>
+<li><p><code>head</code> 查看文件开头，默认10行</p>
+<ul>
+<li><code>-n</code> 指定查看几行</li>
+</ul>
+</li>
+<li><p><code>tail</code> 查看文件末尾，默认10行</p>
+<ul>
+<li><code>-n</code> 指定查看几行</li>
+<li><code>-f</code> 实时追踪文档更新</li>
+</ul>
+</li>
+<li><p><code>ln</code> 软链接</p>
+<ul>
+<li><code>ln -s [原文件或目录] [软链接名]</code></li>
+</ul>
+</li>
+<li><p><code>history</code> 查看历史指令，后面可以跟数字，表示显示后几个</p>
+<ul>
+<li><code>!num</code> 执行编号为num的指令</li>
+</ul>
+</li>
+</ul>
+<ol start="6">
+<li><strong>时间日期类</strong></li>
+</ol>
+<ul>
+<li><code>date</code> 显示当前时间<ul>
+<li><code>date +%Y</code> 显示当前年</li>
+<li><code>date +%m</code> 显示当前月</li>
+<li><code>date +%d</code> 显示当前日</li>
+<li><code>date &quot;+%Y-%m-%d %H:%M:%S&quot;</code> 显示年月日时分秒</li>
+</ul>
+</li>
+<li><code>date -s &quot;2019-8-28 12:02:00&quot;</code> 设置系统时间</li>
+<li><code>cal</code> 显示本月月历<ul>
+<li><code>cal 2019</code> 显示2019年历</li>
+</ul>
+</li>
+</ul>
+<ol start="7">
+<li><strong>搜索查找类</strong></li>
+</ol>
+<ul>
+<li><p><code>find [搜索范围] [选项]</code> 从指定目录递归遍历，将满足条件的显示在终端</p>
+<ul>
+<li><code>-name</code> 按文件名查找</li>
+<li><code>-user</code> 按所属用户名查找</li>
+<li><code>-size</code> 按文件大小查找<ul>
+<li><code>-size +20M</code> 查找大于20M</li>
+<li><code>-size -20M</code> 查找小于20M</li>
+<li><code>-size 20M</code> 查找等于20M</li>
+<li><code>-size +1k -size -5k</code> 查找1k-5k之间</li>
+<li>不加单位，默认单位是扇区，一个扇区512B</li>
+<li>k小写，M大写</li>
+</ul>
+</li>
+<li><code>-type</code> 按文件类型查找<ul>
+<li>f文件(不是-) d目录 l软链接 b块文件 c字符文件 p管道 s套接字</li>
+</ul>
+</li>
+<li><code>-maxdepth</code> 指定搜索层级深度<ul>
+<li><code>find / -maxdepth 1 -type f</code></li>
+</ul>
+</li>
+<li><code>-exec</code> 对搜索结果执行命令<ul>
+<li><code>find / -type f -exec ls -l &#123;&#125; \;</code> 这里末尾是个转义分号</li>
+</ul>
+</li>
+<li><code>xargs</code> 借助|对搜索结果执行命令<ul>
+<li><code>find / -type f | xargs ls -l</code><ul>
+<li>问题：当有一个名字含空格的文件时，会报错</li>
+</ul>
+</li>
+<li><code>find / -type f -print0 | xargs -0 ls -l</code><ul>
+<li>find默认会有-print参数，以空格分隔结果</li>
+<li>这里改成用’\0’分隔结果，也就是数字0</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>-mtime</code> 按文件更改时间来查找文件<ul>
+<li>-n指n天以内，+n指n天以前，下面两个一样</li>
+</ul>
+</li>
+<li><code>-atime</code> 按文件访问时间来查找文件</li>
+<li><code>-ctime</code> 按文件创建时间来查找文件</li>
+<li><code>-amin</code> 查找在系统中最后N分钟访问的文件</li>
+<li><code>-mmin</code> 查找在系统中最后N分钟里修改过的文件</li>
+<li><code>-cmin</code> 查找在系统中最后N分钟创建的文件</li>
+</ul>
+</li>
+<li><pre><code>updatedb    //创建locate数据库
+locate hello.c    //快速定位
+#deepin好像不行
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- &#96;grep&#96; 过滤查找 &#96;|&#96; 将前一个命令处理结果传递给后面的命令处理</span><br><span class="line"></span><br><span class="line">  - &#96;-n&#96; 显示匹配行及行号</span><br><span class="line">  - &#96;-i&#96; 忽略字母大小写</span><br><span class="line">  - 实例：&#96;cat hello.c | grep -ni yes&#96;</span><br><span class="line"></span><br><span class="line">  - 查找内容包含某个关键字的文件</span><br><span class="line">    - &#96;grep -r&#x2F;-R &quot;关键字&quot; 目录位置&#96;</span><br><span class="line">  - 也可以和find一起使用</span><br><span class="line">    - &#96;find &#x2F; -name &quot;*.c&quot; | xargs grep &quot;return&quot; -n&#96;</span><br><span class="line"></span><br><span class="line">- &#96;which&#96; 查找某个指令的位置</span><br><span class="line"></span><br><span class="line">8. **解压和压缩类**</span><br><span class="line"></span><br><span class="line">- &#96;gzip&#x2F;gunzip&#96;</span><br><span class="line"></span><br><span class="line">  - &#96;gzip hello.c&#96; 压缩文件为hello.c.gz文件，hello.c不保留</span><br><span class="line">  - &#96;gunzip hello.c.gz&#96; 解压缩文件，hello.c.gz不保留</span><br><span class="line"></span><br><span class="line">- &#96;zip&#x2F;unzip&#96;</span><br><span class="line"></span><br><span class="line">  - &#96;zip [选项] xxx.zip 将要压缩的内容&#96; 压缩文件和目录</span><br><span class="line">    - &#96;-r&#96; 递归压缩，即压缩目录</span><br><span class="line">  - &#96;unzip [选项] xxx.zip&#96; 解压缩文件</span><br><span class="line">    - &#96;-d&#96; 指定解压后文件存放的目录</span><br><span class="line"></span><br><span class="line">- &#96;tar&#96; 打包指令，最后打包成*.tar.gz文件</span><br><span class="line"></span><br><span class="line">  - &#96;tar [选项] xxx.tar.gz 打包的内容&#96;</span><br><span class="line"></span><br><span class="line">    - &#96;-c&#96; 产生.tar打包文件</span><br><span class="line">    - &#96;-v&#96; 显示详细信息</span><br><span class="line">    - &#96;-f&#96; 指定压缩后的文件名</span><br><span class="line">    - &#96;-z&#96; 打包同时压缩，使用gzip压缩</span><br><span class="line">    - &#96;-j&#96; 打包同时压缩，使用bzip2压缩</span><br><span class="line">    - &#96;-x&#96; 解包.tar文件</span><br><span class="line"></span><br><span class="line">  - 实例：</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    tar -zcvf abc.tar.gz a.txt b.txt c.txt    //打包文件
+    tar -zcvf myhome.tar.gz /home/            //打包目录
+    tar -zxvf abc.tar.gz                    //解压到当前目录
+    tar -zxvf myhome.tar.gz -C /opt/        //解压到/opt目录,这个目录得存在
+    ```
+- gzip和bzip2是linux特有的压缩方式，4G以下的小文件不明显，但是大文件越大，bzip2压缩比越大，bzip2的后缀通常写为.tar.bz2</code></pre>
+</li>
+</ul>
+<ol start="9">
+<li><strong>shell命令使用技巧</strong></li>
+</ol>
+<ul>
+<li>ctrl+a:光标移动到最前端</li>
+<li>ctrl+e:光标移动到最后端</li>
+<li>ctrl+u:清空已输入命令</li>
+</ul>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>lisuqing</li><li class="post-copyright-link"><strong>Post link: </strong><a href="http://lisuqing2020.github.io/2020/01/31/linux/1.%E5%91%BD%E4%BB%A4/" title="1.命令">http://lisuqing2020.github.io/2020/01/31/linux/1.%E5%91%BD%E4%BB%A4/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/01/31/linux/2.%E7%9B%AE%E5%BD%95/" rel="prev" title="2.目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">2.目录</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/01/31/C++/malloc%E4%B8%8Enew/" rel="next" title="malloc与new"><span class="post-nav-text">malloc与new</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" target="_blank" rel="noopener" href="https://github.com/lisuqing2020/lisuqing2020.github.io/issues?q=is:issue+1.命令">GitHub Issues</a></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":null,"appKey":null,"placeholder":"你看一晃两三年，匆匆又夏天","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"appid":"p14aECEQvrlk4brHLOn0nij4-gzGzoHsz","appkey":"J93LFcbKRj9xFjUo40L5y1sj","meta":["nick","mail","link"],"el":"#valine-container","lang":"en"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 李素晴</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.1.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.2.0</span></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="Total Visitors"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="Total Views"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="Search"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="Searching..." value=""></div><div id="local-search-result"></div></div></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>

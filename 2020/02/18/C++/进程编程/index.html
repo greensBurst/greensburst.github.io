@@ -1,0 +1,588 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="李素晴"><meta name="copyright" content="李素晴"><meta name="generator" content="Hexo 5.1.1"><meta name="theme" content="hexo-theme-yun"><title>进程编程 | Lisuqing's Personal Website</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.21/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_2138379_1l6ur2tg9f2.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/photo/icon.png"><link rel="mask-icon" href="/photo/icon.png" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"lisuqing2020.github.io","root":"/","title":"李素晴的日记","version":"1.2.0","mode":"time","copycode":true,"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script data-ad-client="ca-pub-9695375546022807" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><meta name="description" content="一. 进程基本概念 进程（process）的定义 进程是描述程序执行过程和资源共享的基本单位 主要目的：控制和协调程序的执行   进程相关函数 用户与组ID函数：参阅上一讲Linux系统编程 创建进程：system()、fork()、exec() 终止进程：kill() 等待进程终止：wait()、waitpid()   进程组 定义：由一个或多个相关联的进程组成，目的是为了进行作业控制 进程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程编程">
+<meta property="og:url" content="http://lisuqing2020.github.io/2020/02/18/C++/%E8%BF%9B%E7%A8%8B%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Lisuqing&#39;s Personal Website">
+<meta property="og:description" content="一. 进程基本概念 进程（process）的定义 进程是描述程序执行过程和资源共享的基本单位 主要目的：控制和协调程序的执行   进程相关函数 用户与组ID函数：参阅上一讲Linux系统编程 创建进程：system()、fork()、exec() 终止进程：kill() 等待进程终止：wait()、waitpid()   进程组 定义：由一个或多个相关联的进程组成，目的是为了进行作业控制 进程">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-02-18T15:19:06.000Z">
+<meta property="article:modified_time" content="2020-11-22T05:30:19.315Z">
+<meta property="article:author" content="李素晴">
+<meta property="article:tag" content="thuC++">
+<meta name="twitter:card" content="summary"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="李素晴"><img width="96" loading="lazy" src="/photo/avatar.jpg" alt="李素晴"></a><div class="site-author-name"><a href="/about/">李素晴</a></div><a class="site-name" href="/about/site.html">Lisuqing's Personal Website</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">227</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder--line"></use></svg></span><span class="site-state-item-count">10</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag--line"></use></svg></span><span class="site-state-item-count">21</span></a></div><a class="site-state-item hty-icon-button" href="/about" title="留言板"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-clipboard-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1164919034&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/lisuqing2020" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:lisuqing2020@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://juejin.im/user/676954896099847" title="掘金" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-juejin"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://nobilta.github.io/" title="东农吴彦祖" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://happycpp.github.io/" title="渣王" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-%E8%BF%9B%E7%A8%8B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">一. 进程基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%EF%BC%88process%EF%BC%89%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.0.1.</span> <span class="toc-text">进程（process）的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0"><span class="toc-number">1.0.2.</span> <span class="toc-text">进程相关函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%BB%84"><span class="toc-number">1.0.3.</span> <span class="toc-text">进程组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%BB%84%E5%87%BD%E6%95%B0"><span class="toc-number">1.0.4.</span> <span class="toc-text">进程组函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%9A%E8%AF%9D%EF%BC%88session%EF%BC%89"><span class="toc-number">1.0.5.</span> <span class="toc-text">会话（session）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%BB%84%E5%87%BD%E6%95%B0-1"><span class="toc-number">1.0.5.1.</span> <span class="toc-text">进程组函数</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-%E4%BF%A1%E5%8F%B7"><span class="toc-number">2.</span> <span class="toc-text">二. 信号</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%EF%BC%88signal%EF%BC%89%EF%BC%9A%E8%BF%9B%E7%A8%8B%E9%80%9A%E8%AE%AF%E6%9C%BA%E5%88%B6"><span class="toc-number">2.0.1.</span> <span class="toc-text">信号（signal）：进程通讯机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E4%BF%A1%E5%8F%B7"><span class="toc-number">2.0.2.</span> <span class="toc-text">系统信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E5%8F%91%E9%80%81%E7%9A%84%E4%BF%A1%E5%8F%B7"><span class="toc-number">2.0.3.</span> <span class="toc-text">进程间发送的信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86"><span class="toc-number">2.0.4.</span> <span class="toc-text">信号处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sigaction-%E5%87%BD%E6%95%B0%EF%BC%9A%E8%AE%BE%E7%BD%AE%E4%BF%A1%E5%8F%B7%E9%85%8D%E7%BD%AE"><span class="toc-number">2.0.5.</span> <span class="toc-text">sigaction()函数：设置信号配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E7%BB%93%E6%9E%84%E4%BD%93struct-sigaction"><span class="toc-number">2.0.6.</span> <span class="toc-text">信号结构体struct sigaction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E4%BF%A1%E5%8F%B7%E6%97%B6%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">2.0.7.</span> <span class="toc-text">处理信号时的注意事项</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">三. 进程管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="toc-number">3.0.1.</span> <span class="toc-text">进程创建</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#system-%E5%87%BD%E6%95%B0%EF%BC%9A%E7%94%A8%E4%BA%8E%E5%9C%A8%E7%A8%8B%E5%BA%8F%E4%B8%AD%E6%89%A7%E8%A1%8C%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4"><span class="toc-number">3.0.1.1.</span> <span class="toc-text">system()函数：用于在程序中执行一条命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#fork-%E5%87%BD%E6%95%B0%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%BD%93%E5%89%8D%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%89%AF%E6%9C%AC%E4%BD%9C%E4%B8%BA%E5%AD%90%E8%BF%9B%E7%A8%8B"><span class="toc-number">3.0.1.2.</span> <span class="toc-text">fork()函数：创建当前进程的副本作为子进程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#exec-%E5%87%BD%E6%95%B0%E7%B0%87%E5%8E%9F%E5%9E%8B"><span class="toc-number">3.0.1.3.</span> <span class="toc-text">exec()函数簇原型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="toc-number">3.0.2.</span> <span class="toc-text">进程调度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5%EF%BC%9A%E5%85%88%E8%BF%9B%E5%85%88%E5%87%BA%EF%BC%8C%E6%97%B6%E9%97%B4%E7%89%87%E8%BD%AE%E8%BD%AC%EF%BC%8C%E6%99%AE%E9%80%9A%E8%B0%83%E5%BA%A6%EF%BC%8C%E6%89%B9%E8%B0%83%E5%BA%A6%EF%BC%8C%E9%AB%98%E4%BC%98%E5%85%88%E7%BA%A7%E6%8A%A2%E5%85%88"><span class="toc-number">3.0.2.1.</span> <span class="toc-text">进程调度策略：先进先出，时间片轮转，普通调度，批调度，高优先级抢先</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5%E5%87%BD%E6%95%B0%EF%BC%9A%E5%A4%B4%E6%96%87%E4%BB%B6%E2%80%9Csched-h%E2%80%9D"><span class="toc-number">3.0.2.2.</span> <span class="toc-text">进程调度策略函数：头文件“sched.h”</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7%E8%B0%83%E6%95%B4%EF%BC%9A%E5%A4%B4%E6%96%87%E4%BB%B6%E2%80%9Csys-time-h%E2%80%9D%E5%92%8C%E2%80%9Csys-resource-h%E2%80%9D"><span class="toc-number">3.0.2.3.</span> <span class="toc-text">进程优先级调整：头文件“sys&#x2F;time.h”和“sys&#x2F;resource.h”</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E4%BA%B2%E5%92%8C%E6%80%A7-%E8%AF%A5%E8%BF%9B%E7%A8%8B%E5%80%BE%E5%90%91%E4%BA%8E%E5%9C%A8%E7%AC%AC%E5%87%A0%E5%8F%B7cpu%E4%B8%8A%E5%8E%BB%E5%81%9A-%EF%BC%9A%E5%A4%B4%E6%96%87%E4%BB%B6%E2%80%9Csched-h%E2%80%9D"><span class="toc-number">3.0.2.4.</span> <span class="toc-text">处理器亲和性(该进程倾向于在第几号cpu上去做)：头文件“sched.h”</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%BB%88%E6%AD%A2"><span class="toc-number">3.0.3.</span> <span class="toc-text">进程终止</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%88%E6%AD%A2%E8%BF%9B%E7%A8%8B%E5%87%BD%E6%95%B0%EF%BC%9Akill"><span class="toc-number">3.0.3.1.</span> <span class="toc-text">终止进程函数：kill()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E8%BF%9B%E7%A8%8B%E7%BB%93%E6%9D%9F%E5%87%BD%E6%95%B0%EF%BC%9Await"><span class="toc-number">3.0.3.2.</span> <span class="toc-text">等待进程结束函数：wait()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B"><span class="toc-number">3.0.4.</span> <span class="toc-text">僵尸进程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%90%E8%BF%9B%E7%A8%8B%E5%B7%B2%E7%BB%93%E6%9D%9F%EF%BC%8C%E4%BD%86%E7%88%B6%E8%BF%9B%E7%A8%8B%E6%9C%AA%E8%B0%83%E7%94%A8wait-%E5%87%BD%E6%95%B0%E7%AD%89%E5%BE%85"><span class="toc-number">3.0.4.1.</span> <span class="toc-text">子进程已结束，但父进程未调用wait()函数等待</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B8%85%E9%99%A4%E5%AD%90%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%89%8B%E6%AE%B5"><span class="toc-number">3.0.4.2.</span> <span class="toc-text">清除子进程的手段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90%E8%BF%9B%E7%A8%8B%E5%BC%82%E6%AD%A5%E6%B8%85%E9%99%A4"><span class="toc-number">3.0.5.</span> <span class="toc-text">子进程异步清除</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SIGCHLD%E4%BF%A1%E5%8F%B7%EF%BC%9A%E5%AD%90%E8%BF%9B%E7%A8%8B%E7%BB%88%E6%AD%A2%E6%97%B6%EF%BC%8C%E5%90%91%E7%88%B6%E8%BF%9B%E7%A8%8B%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%EF%BC%8C%E7%BC%96%E5%86%99%E6%AD%A4%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E4%BE%8B%E7%A8%8B%EF%BC%8C%E5%BC%82%E6%AD%A5%E6%B8%85%E9%99%A4%E5%AD%90%E8%BF%9B%E7%A8%8B"><span class="toc-number">3.0.5.1.</span> <span class="toc-text">SIGCHLD信号：子进程终止时，向父进程自动发送，编写此信号处理例程，异步清除子进程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B"><span class="toc-number">3.0.6.</span> <span class="toc-text">守护进程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.0.6.1.</span> <span class="toc-text">创建守护进程的步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E5%88%9B%E5%BB%BA%E5%87%BD%E6%95%B0daemon"><span class="toc-number">3.0.6.2.</span> <span class="toc-text">守护进程创建函数daemon()</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="toc-number">4.</span> <span class="toc-text">四. 进程间通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%A1%E9%81%93%EF%BC%9A%E7%9B%B8%E5%85%B3%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%A1%BA%E5%BA%8F%E9%80%9A%E4%BF%A1"><span class="toc-number">4.0.1.</span> <span class="toc-text">管道：相关进程间的顺序通信</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%A1%E9%81%93%EF%BC%88pipe%EF%BC%89%E7%9A%84%E6%80%A7%E8%B4%A8%E4%B8%8E%E6%84%8F%E4%B9%89"><span class="toc-number">4.0.1.1.</span> <span class="toc-text">管道（pipe）的性质与意义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%A1%E9%81%93%E7%9A%84%E7%94%A8%E9%80%94"><span class="toc-number">4.0.1.2.</span> <span class="toc-text">管道的用途</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">4.0.1.3.</span> <span class="toc-text">注意事项</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pipe%E5%87%BD%E6%95%B0%EF%BC%9A%E5%88%9B%E5%BB%BA%E7%AE%A1%E9%81%93"><span class="toc-number">4.0.1.4.</span> <span class="toc-text">pipe函数：创建管道</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AD%89%E4%BD%8D%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="toc-number">4.0.1.5.</span> <span class="toc-text">等位文件描述符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dup-%E5%87%BD%E6%95%B0%EF%BC%9A%E5%B0%86%E4%B8%A4%E4%B8%AA%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%AD%89%E4%BD%8D%E5%A4%84%E7%90%86"><span class="toc-number">4.0.1.6.</span> <span class="toc-text">dup()函数：将两个文件描述符等位处理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%EF%BC%9A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E7%9A%84%E5%90%8C%E6%AD%A5%E6%8E%A7%E5%88%B6%E6%9C%BA%E5%88%B6"><span class="toc-number">4.0.2.</span> <span class="toc-text">进程信号量：进程间通信的同步控制机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%EF%BC%9A-System-V%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-number">4.0.2.1.</span> <span class="toc-text">进程信号量： System V信号量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">4.0.2.2.</span> <span class="toc-text">信号量的定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-number">4.0.2.3.</span> <span class="toc-text">信号量的操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Linux%E4%BF%A1%E5%8F%B7%E9%87%8F%E5%AE%9E%E7%8E%B0%EF%BC%9A%E4%B8%A4%E4%B8%AA%E7%89%88%E6%9C%AC"><span class="toc-number">4.0.2.4.</span> <span class="toc-text">Linux信号量实现：两个版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%BF%9B%E7%A8%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%E6%97%B6%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">4.0.2.5.</span> <span class="toc-text">使用进程信号量时的注意事项</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#semget-%E5%87%BD%E6%95%B0%EF%BC%9A%E5%88%9B%E5%BB%BA%E6%88%96%E8%8E%B7%E5%8F%96%E8%BF%9B%E7%A8%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%E9%9B%86"><span class="toc-number">4.0.2.6.</span> <span class="toc-text">semget()函数：创建或获取进程信号量集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%92%8C%E7%AE%A1%E7%90%86%E8%BF%9B%E7%A8%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%E9%9B%86"><span class="toc-number">4.0.2.7.</span> <span class="toc-text">控制和管理进程信号量集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8A%E6%94%BE%EF%BC%88%E5%88%A0%E9%99%A4%EF%BC%89%E8%BF%9B%E7%A8%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%E9%9B%86%EF%BC%9AIPC-RMID"><span class="toc-number">4.0.2.8.</span> <span class="toc-text">释放（删除）进程信号量集：IPC_RMID</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%9B%E7%A8%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%E9%9B%86%EF%BC%9ASETALL"><span class="toc-number">4.0.2.9.</span> <span class="toc-text">初始化进程信号量集：SETALL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%82%E6%95%B0"><span class="toc-number">4.0.2.10.</span> <span class="toc-text">其他常用命令参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E4%B8%8E%E9%87%8A%E6%94%BE"><span class="toc-number">4.0.2.11.</span> <span class="toc-text">获取与释放</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E4%B8%8E%E5%8F%91%E5%B8%83%E8%BF%9B%E7%A8%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%E5%87%BD%E6%95%B0semop"><span class="toc-number">4.0.2.12.</span> <span class="toc-text">等待与发布进程信号量函数semop()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#struct-sembuf%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%88%90%E5%91%98"><span class="toc-number">4.0.2.13.</span> <span class="toc-text">struct sembuf类型的成员</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E4%B8%8E%E5%8F%91%E5%B8%83"><span class="toc-number">4.0.2.14.</span> <span class="toc-text">等待与发布</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%EF%BC%9A%E5%85%81%E8%AE%B8%E5%A4%9A%E4%B8%AA%E8%BF%9B%E7%A8%8B%E8%AF%BB%E5%86%99%E5%90%8C%E4%B8%80%E7%89%87%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="toc-number">4.0.3.</span> <span class="toc-text">共享内存：允许多个进程读写同一片内存区域</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E7%9A%84%E6%84%8F%E4%B9%89%EF%BC%9A%E5%BF%AB%E6%8D%B7%E6%96%B9%E4%BE%BF%E7%9A%84%E6%9C%AC%E5%9C%B0%E9%80%9A%E4%BF%A1%E6%9C%BA%E5%88%B6"><span class="toc-number">4.0.3.1.</span> <span class="toc-text">共享内存的意义：快捷方便的本地通信机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E7%BC%96%E7%A8%8B%E5%8E%9F%E5%88%99"><span class="toc-number">4.0.3.2.</span> <span class="toc-text">共享内存编程原则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B"><span class="toc-number">4.0.3.3.</span> <span class="toc-text">共享内存使用过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Linux%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="toc-number">4.0.3.4.</span> <span class="toc-text">Linux内存模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shmget-%E5%87%BD%E6%95%B0%EF%BC%9A%E8%8E%B7%E5%8F%96%E6%88%96%E5%88%86%E9%85%8D%E4%B8%80%E6%AE%B5%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="toc-number">4.0.3.5.</span> <span class="toc-text">shmget()函数：获取或分配一段共享内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shmat-%E5%87%BD%E6%95%B0%EF%BC%9A%E8%BF%9E%E6%8E%A5%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="toc-number">4.0.3.6.</span> <span class="toc-text">shmat()函数：连接共享内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shmdt-%E5%87%BD%E6%95%B0%EF%BC%9A%E6%8B%86%E5%8D%B8%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E6%AE%B5"><span class="toc-number">4.0.3.7.</span> <span class="toc-text">shmdt()函数：拆卸共享内存段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%98%A0%E5%B0%84%E5%86%85%E5%AD%98%EF%BC%9A%E4%B8%8E%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E6%84%8F%E4%B9%89%E7%9B%B8%E5%90%8C%EF%BC%8C%E4%BD%86%E4%B8%8E%E6%96%87%E4%BB%B6%E7%9B%B8%E5%85%B3%E8%81%94"><span class="toc-number">4.0.4.</span> <span class="toc-text">映射内存：与共享内存意义相同，但与文件相关联</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#mmap-%E5%87%BD%E6%95%B0%EF%BC%9A%E5%A4%B4%E6%96%87%E4%BB%B6%E2%80%9Csys-mman-h%E2%80%9D"><span class="toc-number">4.0.4.1.</span> <span class="toc-text">mmap()函数：头文件“sys&#x2F;mman.h”</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#munmap-%E5%87%BD%E6%95%B0%EF%BC%9A%E9%87%8A%E6%94%BE%E6%98%A0%E5%B0%84%E5%86%85%E5%AD%98"><span class="toc-number">4.0.4.2.</span> <span class="toc-text">munmap()函数：释放映射内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#msync-%E5%87%BD%E6%95%B0%EF%BC%9A%E6%98%A0%E5%B0%84%E5%86%85%E5%AD%98%E5%90%8C%E6%AD%A5"><span class="toc-number">4.0.4.3.</span> <span class="toc-text">msync()函数：映射内存同步</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%EF%BC%9A%E5%9C%A8%E8%BF%9B%E7%A8%8B%E9%97%B4%E4%BC%A0%E9%80%92%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9D%97%E6%95%B0%E6%8D%AE"><span class="toc-number">4.0.5.</span> <span class="toc-text">消息队列：在进程间传递二进制块数据</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%EF%BC%9A%E5%9C%A8%E4%B8%A4%E4%B8%AA%E8%BF%9B%E7%A8%8B%E9%97%B4%E4%BC%A0%E9%80%92%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9D%97%E6%95%B0%E6%8D%AE"><span class="toc-number">4.0.5.1.</span> <span class="toc-text">消息队列：在两个进程间传递二进制块数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#msgget-%E5%87%BD%E6%95%B0%EF%BC%9A%E5%88%9B%E5%BB%BA%E6%88%96%E8%8E%B7%E5%8F%96%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="toc-number">4.0.5.2.</span> <span class="toc-text">msgget()函数：创建或获取消息队列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#msgsnd-%E5%87%BD%E6%95%B0%EF%BC%9A%E5%B0%86%E6%B6%88%E6%81%AF%E6%B7%BB%E5%8A%A0%E5%88%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B8%AD"><span class="toc-number">4.0.5.3.</span> <span class="toc-text">msgsnd()函数：将消息添加到消息队列中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#msgrcv-%E5%87%BD%E6%95%B0%EF%BC%9A%E4%BB%8E%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B8%AD%E8%8E%B7%E5%8F%96%E6%B6%88%E6%81%AF"><span class="toc-number">4.0.5.4.</span> <span class="toc-text">msgrcv()函数：从消息队列中获取消息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#msgctl-%E5%87%BD%E6%95%B0%EF%BC%9A%E6%8E%A7%E5%88%B6%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E6%9F%90%E4%BA%9B%E5%B1%9E%E6%80%A7"><span class="toc-number">4.0.5.5.</span> <span class="toc-text">msgctl()函数：控制消息队列的某些属性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A5%97%E6%8E%A5%E5%AD%97%EF%BC%9A%E6%94%AF%E6%8C%81%E6%97%A0%E5%85%B3%E8%BF%9B%E7%A8%8B%EF%BC%8C%E7%94%9A%E8%87%B3%E4%B8%8D%E5%90%8C%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BF%9B%E8%A1%8C%E9%80%9A%E4%BF%A1"><span class="toc-number">4.0.6.</span> <span class="toc-text">套接字：支持无关进程，甚至不同计算机进行通信</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94-%E8%BF%9B%E7%A8%8B%E6%B1%A0"><span class="toc-number">5.</span> <span class="toc-text">五. 进程池</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%9C%BA%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%BC%95%E5%85%A5%E8%BF%9B%E7%A8%8B%E6%B1%A0%EF%BC%9F"><span class="toc-number">5.0.1.</span> <span class="toc-text">动机：为什么需要引入进程池？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%BF%9B%E7%A8%8B%E6%B1%A0%EF%BC%9F"><span class="toc-number">5.0.2.</span> <span class="toc-text">什么是进程池？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">5.0.3.</span> <span class="toc-text">进程池的工作原理是什么？</span></a></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://lisuqing2020.github.io/2020/02/18/C++/%E8%BF%9B%E7%A8%8B%E7%BC%96%E7%A8%8B/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="李素晴"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Lisuqing's Personal Website"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">进程编程</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-02-18 23:19:06" itemprop="dateCreated datePublished" datetime="2020-02-18T23:19:06+08:00">2020-02-18</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2020-11-22 13:30:19" itemprop="dateModified" datetime="2020-11-22T13:30:19+08:00">2020-11-22</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-category"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span> <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category" href="/categories/C/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">C++</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag" href="/tags/thuC/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">thuC++</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><a id="more"></a>
+
+<h1 id="一-进程基本概念"><a href="#一-进程基本概念" class="headerlink" title="一. 进程基本概念"></a>一. 进程基本概念</h1><ol>
+<li><h3 id="进程（process）的定义"><a href="#进程（process）的定义" class="headerlink" title="进程（process）的定义"></a>进程（process）的定义</h3><ul>
+<li>进程是描述程序执行过程和资源共享的基本单位</li>
+<li>主要目的：控制和协调程序的执行</li>
+</ul>
+</li>
+<li><h3 id="进程相关函数"><a href="#进程相关函数" class="headerlink" title="进程相关函数"></a>进程相关函数</h3><ul>
+<li>用户与组ID函数：参阅上一讲Linux系统编程</li>
+<li>创建进程：system()、fork()、exec()</li>
+<li>终止进程：kill()</li>
+<li>等待进程终止：wait()、waitpid()</li>
+</ul>
+</li>
+<li><h3 id="进程组"><a href="#进程组" class="headerlink" title="进程组"></a>进程组</h3><ul>
+<li>定义：由一个或多个相关联的进程组成，目的是为了进行作业控制</li>
+<li>进程组的主要特征：信号可以发送给进程组中的所有进程，并使该进程组中的所有进程终止、停止或继续运行</li>
+<li>每个进程都属于某个进程组</li>
+</ul>
+</li>
+<li><h3 id="进程组函数"><a href="#进程组函数" class="headerlink" title="进程组函数"></a>进程组函数</h3><ul>
+<li>获取进程组ID：<code>pid_t getpgid(pid_t pid);</code><ul>
+<li>返回pid进程的进程组ID；若pid为0，则返回当前进程的进程组ID；出错时返回-1，并设errno值</li>
+</ul>
+</li>
+<li>设置进程组ID：<code>int setpgid(pid_t pid, pig_t pgid);</code><ul>
+<li>若pid为0，则使用调用者PID；若pgid为0，则将pid进程的进程PID设为进程组ID；成功时返回0，出错时返回-1，并设errno值</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h3 id="会话（session）"><a href="#会话（session）" class="headerlink" title="会话（session）"></a>会话（session）</h3><ul>
+<li>会话为一个或多个进程组的集合，包括登录用户的全部活动，并具有一个控制终端</li>
+<li>登录进程为每个用户创建一个会话，用户登录shell进程成为会话首领，其PID设为会话ID</li>
+<li>非会话首领进程通过调用setsid()函数创建新会话，并成为首领</li>
+</ul>
+</li>
+<li><h4 id="进程组函数-1"><a href="#进程组函数-1" class="headerlink" title="进程组函数"></a>进程组函数</h4><ul>
+<li>获取会话ID：<code>pid_t getsid(pid_t pid);</code><ul>
+<li>返回pid进程的会话ID；若pid为0，则返回当前进程的会话ID；成功时返回会话ID，出错时返回-1，并设errno值</li>
+</ul>
+</li>
+<li>设置会话ID：<code>pid_t setsid();</code><ul>
+<li>成功时返回新创建的会话ID，出错时返回-1，并设errno值</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="二-信号"><a href="#二-信号" class="headerlink" title="二. 信号"></a>二. 信号</h1><ol>
+<li><h3 id="信号（signal）：进程通讯机制"><a href="#信号（signal）：进程通讯机制" class="headerlink" title="信号（signal）：进程通讯机制"></a>信号（signal）：进程通讯机制</h3><ul>
+<li>信号是发送给进程的特殊异步消息</li>
+<li>当进程接收到信息时立即处理，此时并不需要完成当前函数调用甚至当前代码行</li>
+<li>Linux系统中有多种信号，各具有不同的意义；系统以数字标识不同的信号，程序一般以名称引用之</li>
+</ul>
+</li>
+<li><h3 id="系统信号"><a href="#系统信号" class="headerlink" title="系统信号"></a>系统信号</h3><ul>
+<li>缺省处理逻辑：终止进程，生成内核转储文件</li>
+<li>使用“kill –l”命令可查看操作系统支持的信号列表，不同的系统可能有所不同</li>
+<li>系统信号表：</li>
+</ul>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th align="center">信号</th>
+<th align="center">值</th>
+<th align="center">缺省动作</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">SIGHUP</td>
+<td align="center">1</td>
+<td align="center">终止进程</td>
+<td align="center">终端的挂断或进程死亡</td>
+</tr>
+<tr>
+<td align="center">SIGINT</td>
+<td align="center">2</td>
+<td align="center">终止进程</td>
+<td align="center">来自键盘的中断信号，通常为Ctrl+C</td>
+</tr>
+<tr>
+<td align="center">SIGQUIT</td>
+<td align="center">3</td>
+<td align="center">内核转储</td>
+<td align="center">来自键盘的离开信号</td>
+</tr>
+<tr>
+<td align="center">SIGILL</td>
+<td align="center">4</td>
+<td align="center">内核转储</td>
+<td align="center">非法指令</td>
+</tr>
+<tr>
+<td align="center">SIGTRAP</td>
+<td align="center">5</td>
+<td align="center">内核转储</td>
+<td align="center">断点或其他陷阱指令，用于调试器</td>
+</tr>
+<tr>
+<td align="center">SIGABRT</td>
+<td align="center">6</td>
+<td align="center">内核转储</td>
+<td align="center">来自abort的异常信号</td>
+</tr>
+<tr>
+<td align="center">SIGBUS</td>
+<td align="center">7</td>
+<td align="center">内核转储</td>
+<td align="center">总线错误（内存访问错误）</td>
+</tr>
+<tr>
+<td align="center">SIGFPE</td>
+<td align="center">8</td>
+<td align="center">内核转储</td>
+<td align="center">浮点异常</td>
+</tr>
+<tr>
+<td align="center">SIGKILL</td>
+<td align="center">9</td>
+<td align="center">终止进程</td>
+<td align="center">杀死进程</td>
+</tr>
+<tr>
+<td align="center">SIGUSR1</td>
+<td align="center">10</td>
+<td align="center">终止进程</td>
+<td align="center">用户自定义信号1</td>
+</tr>
+<tr>
+<td align="center">SIGSEGV</td>
+<td align="center">11</td>
+<td align="center">内核转储</td>
+<td align="center">段非法错误（内存访问无效）</td>
+</tr>
+<tr>
+<td align="center">SIGUSR2</td>
+<td align="center">12</td>
+<td align="center">终止进程</td>
+<td align="center">用户自定义信号2</td>
+</tr>
+<tr>
+<td align="center">SIGPIPE</td>
+<td align="center">13</td>
+<td align="center">终止进程</td>
+<td align="center">管道损坏：向一个没有读进程的管道写数据</td>
+</tr>
+<tr>
+<td align="center">SIGALRM</td>
+<td align="center">14</td>
+<td align="center">终止进程</td>
+<td align="center">计时器定时信号</td>
+</tr>
+<tr>
+<td align="center">SIGTERM</td>
+<td align="center">15</td>
+<td align="center">终止进程</td>
+<td align="center">进程终止信号</td>
+</tr>
+<tr>
+<td align="center">SIGSTKFLT</td>
+<td align="center">16</td>
+<td align="center">终止进程</td>
+<td align="center">协处理器堆栈错误（不使用）</td>
+</tr>
+<tr>
+<td align="center">SIGCHLD</td>
+<td align="center">17</td>
+<td align="center">忽略</td>
+<td align="center">子进程停止或终止</td>
+</tr>
+<tr>
+<td align="center">SIGCONT</td>
+<td align="center">18</td>
+<td align="center">忽略</td>
+<td align="center">如果停止，继续执行</td>
+</tr>
+<tr>
+<td align="center">SIGSTOP</td>
+<td align="center">19</td>
+<td align="center">停止进程</td>
+<td align="center">非来自终端的停止信号</td>
+</tr>
+<tr>
+<td align="center">SIGTSTP</td>
+<td align="center">20</td>
+<td align="center">停止进程</td>
+<td align="center">来自终端的停止信号，通常为Ctrl+Z</td>
+</tr>
+<tr>
+<td align="center">SIGTTIN</td>
+<td align="center">21</td>
+<td align="center">停止进程</td>
+<td align="center">后台进程读终端</td>
+</tr>
+<tr>
+<td align="center">SIGTTOU</td>
+<td align="center">22</td>
+<td align="center">停止进程</td>
+<td align="center">后台进程写终端</td>
+</tr>
+<tr>
+<td align="center">SIGURG</td>
+<td align="center">23</td>
+<td align="center">忽略</td>
+<td align="center">有紧急数据到达套接字信号</td>
+</tr>
+<tr>
+<td align="center">SIGXCPU</td>
+<td align="center">24</td>
+<td align="center">内核转储</td>
+<td align="center">超过CPU时限</td>
+</tr>
+<tr>
+<td align="center">SIGXFSZ</td>
+<td align="center">25</td>
+<td align="center">内核转储</td>
+<td align="center">超过文件长度限制</td>
+</tr>
+<tr>
+<td align="center">SIGVTALRM</td>
+<td align="center">26</td>
+<td align="center">终止进程</td>
+<td align="center">虚拟计时器定时信号（进程占用CPU时间）</td>
+</tr>
+<tr>
+<td align="center">SIGPROF</td>
+<td align="center">27</td>
+<td align="center">终止进程</td>
+<td align="center">计时器定时信号（程序占用CPU时间和系统调度时间）</td>
+</tr>
+<tr>
+<td align="center">SIGWINCH</td>
+<td align="center">28</td>
+<td align="center">忽略</td>
+<td align="center">窗口大小改变</td>
+</tr>
+<tr>
+<td align="center">SIGIO</td>
+<td align="center">29</td>
+<td align="center">终止进程</td>
+<td align="center">描述符上可以进行I/O操作</td>
+</tr>
+<tr>
+<td align="center">SIGPWR</td>
+<td align="center">30</td>
+<td align="center">终止进程</td>
+<td align="center">电力故障</td>
+</tr>
+<tr>
+<td align="center">SIGSYS</td>
+<td align="center">31</td>
+<td align="center">内核转储</td>
+<td align="center">非法系统调用</td>
+</tr>
+</tbody></table>
+<ol start="3">
+<li><h3 id="进程间发送的信号"><a href="#进程间发送的信号" class="headerlink" title="进程间发送的信号"></a>进程间发送的信号</h3><ul>
+<li>SIGTERM、SIGKILL：终止进程信号，前者是请求（接收信号的进程可以忽略之），后者是强制</li>
+<li>SIGUSR1、SIGUSR2：用户自定义信号，可用于向进程发送命令</li>
+</ul>
+</li>
+<li><h3 id="信号处理"><a href="#信号处理" class="headerlink" title="信号处理"></a>信号处理</h3><ul>
+<li>进程接收到信号后，根据信号配置进行处理</li>
+<li>缺省配置：在程序没有处理时，确定信号该如何处理</li>
+<li>程序处理信号的方式：按照信号处理例程的函数指针类型定义一个函数，然后调用</li>
+</ul>
+</li>
+<li><h3 id="sigaction-函数：设置信号配置"><a href="#sigaction-函数：设置信号配置" class="headerlink" title="sigaction()函数：设置信号配置"></a>sigaction()函数：设置信号配置</h3><ul>
+<li>原型：<code>int sigaction(int signum, const struct sigaction * act, struct sigaction * oldact);</code></li>
+<li>signum为信号编号，act和oldact分别为指向信号结构体struct sigaction的指针，前者为新配置，后者为需要保存的老配置</li>
+</ul>
+</li>
+<li><h3 id="信号结构体struct-sigaction"><a href="#信号结构体struct-sigaction" class="headerlink" title="信号结构体struct sigaction"></a>信号结构体struct sigaction</h3><ul>
+<li>最重要的成员为sa_handler，其取值为SIG_DFL（使用信号缺省配置）、SIG_IGN（忽略该信号）或指向信号处理例程的函数指针（以信号编号为参数，无返回值）</li>
+</ul>
+</li>
+<li><h3 id="处理信号时的注意事项"><a href="#处理信号时的注意事项" class="headerlink" title="处理信号时的注意事项"></a>处理信号时的注意事项</h3><ul>
+<li>信号是异步操作，当处理信号时，主程序非常脆弱</li>
+<li>信号处理例程应尽可能短小，它甚至有可能会被新信号所中断</li>
+<li>尽量不要在信号处理例程中实施I/O操作，也不要频繁调用系统函数或库函数</li>
+<li>在信号处理例程中进行复杂的赋值操作也是危险的，它可能不是原子操作，因而有可能在执行期间被中断</li>
+<li>如果需要赋值，使用sig_atomic_t类型的全局变量（在Linux中等价于int，亦即允许整数或指针赋值，更大尺寸数据不允许）<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;	//  处理信号的头文件</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">sig_atomic_t</span>  sigusr1_count = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span>  &#123;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnSigUsr1</span><span class="params">(<span class="keyword">int</span> signal_number)</span> </span>&#123;</span><br><span class="line">    ++sigusr1_count;  </span><br><span class="line">&#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>  &lt;&lt; <span class="string">&quot;pid: &quot;</span> &lt;&lt; (<span class="keyword">int</span>)getpid() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">sa</span>;</span></span><br><span class="line"><span class="built_in">memset</span>(&amp;sa, <span class="number">0</span>, <span class="keyword">sizeof</span>(sa));</span><br><span class="line">sa.sa_handler = &amp;OnSigUsr1;</span><br><span class="line">sigaction(SIGUSR1, &amp;sa, <span class="literal">NULL</span>);  <span class="comment">// sa挂接到SIGUSR1</span></span><br><span class="line">sleep(<span class="number">100</span>);    <span class="comment">//  在终端中输入kill –s SIGUSR1 pid，信号计数器将递增</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;SIGUSR1 counts: &quot;</span> &lt;&lt; sigusr1_count &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="三-进程管理"><a href="#三-进程管理" class="headerlink" title="三. 进程管理"></a>三. 进程管理</h1><ol>
+<li><h3 id="进程创建"><a href="#进程创建" class="headerlink" title="进程创建"></a>进程创建</h3><ol>
+<li><h4 id="system-函数：用于在程序中执行一条命令"><a href="#system-函数：用于在程序中执行一条命令" class="headerlink" title="system()函数：用于在程序中执行一条命令"></a>system()函数：用于在程序中执行一条命令</h4><ul>
+<li>原型：<code>int system(const char * cmd);</code></li>
+<li>在Bourne shell中，系统会创建一个子进程运行被调命令；返回值为shell的退出状态；如果shell不能运行，返回127；如果发生其他错误，返回-1</li>
+<li>示例：<code>int ret_val = system(&quot;ls -l /&quot;);</code></li>
+</ul>
+</li>
+<li><h4 id="fork-函数：创建当前进程的副本作为子进程"><a href="#fork-函数：创建当前进程的副本作为子进程" class="headerlink" title="fork()函数：创建当前进程的副本作为子进程"></a>fork()函数：创建当前进程的副本作为子进程</h4><ul>
+<li>原型：<code>pid_t fork();</code></li>
+<li>返回值为0（新创建的子进程）和子进程的PID（父进程）</li>
+<li>使用fork()函数创建进程副本：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;the main program process ID is &quot;</span> &lt;&lt; (<span class="keyword">int</span>)getpid() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">pid_t</span>  child_pid = fork();</span><br><span class="line"><span class="keyword">if</span>( child_pid != <span class="number">0</span> ) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;this is the parent process, with id &quot;</span> &lt;&lt; (<span class="keyword">int</span>)getpid() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;the child’s process ID is &quot;</span> &lt;&lt; (<span class="keyword">int</span>)child_pid &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;this is the child process, with id &quot;</span> &lt;&lt; (<span class="keyword">int</span>)getpid() &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    the main program process ID is 30840</span></span><br><span class="line"><span class="comment">    this is the parent process, with id 30840</span></span><br><span class="line"><span class="comment">    the child’s process ID is 30841</span></span><br><span class="line"><span class="comment">    this is the child process, with id 30841</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h4 id="exec-函数簇原型"><a href="#exec-函数簇原型" class="headerlink" title="exec()函数簇原型"></a>exec()函数簇原型</h4><ul>
+<li>int execl(const char * path, const char * arg, …);</li>
+<li>int execlp(const char * file, const char * arg, …);</li>
+<li>int execle(const char * path, const char * arg, …, char * const envp[]);</li>
+<li>int execv(const char * path, char * const argv[]);</li>
+<li>int execvp(const char * file, char * const argv[]);</li>
+<li>int execvpe(const char * file, char * const argv[], char * const envp[]);</li>
+<li>exec()函数说明<ul>
+<li>函数名称中包含字母“p”（execvp、execlp）：接受程序名作为参数，在当前执行路径中按程序名查找；不包含字母“p”的，必须提供程序的完整路径</li>
+<li>函数名称中包含字母“v”（execv、 execvp、execve）：接受以NULL结尾的字符串数组格式的参数列表</li>
+<li>函数名称中包含字母“l”（execl、 execlp、execle） ：接受C格式的可变参数列表</li>
+<li>函数名称中包含字母“e”（execve、execle） ：接受一个附加的环境参数列表，参数格式为NULL结尾的字符串数组，且字符串的格式为“VARIABLE=value”</li>
+</ul>
+</li>
+<li>基本模式：在程序中调用fork()创建一个子进程，然后调用exec()在子进程中执行命令<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">spawn</span><span class="params">(<span class="keyword">char</span> *program, <span class="keyword">char</span> **args)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">char</span> *args[] = &#123;(<span class="keyword">char</span> *)<span class="string">&quot;ls&quot;</span>, (<span class="keyword">char</span> *)<span class="string">&quot;-l&quot;</span>, (<span class="keyword">char</span> *)<span class="string">&quot;/&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">spawn((<span class="keyword">char</span> *)<span class="string">&quot;ls&quot;</span>, args);</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Done!\n&quot;</span>;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  创建一个子进程运行新程序</span></span><br><span class="line"><span class="comment">//  program为程序名，arg_list为程序的参数列表；返回值为子进程id</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">spawn</span><span class="params">(<span class="keyword">char</span> *program, <span class="keyword">char</span> **args)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">pid_t</span> child_pid = fork(); <span class="comment">//  复制进程</span></span><br><span class="line"><span class="keyword">if</span> (child_pid != <span class="number">0</span>)       <span class="comment">//  此为父进程</span></span><br><span class="line">    <span class="keyword">return</span> child_pid;</span><br><span class="line"><span class="keyword">else</span> <span class="comment">//  此为子进程</span></span><br><span class="line">&#123;</span><br><span class="line">    execvp(program, args); <span class="comment">//  执行程序，按路径查找</span></span><br><span class="line">    <span class="comment">//  只有发生错误时，该函数才返回</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">&quot;Error occurred when executing execvp.\n&quot;</span>;</span><br><span class="line">    <span class="built_in">abort</span>();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="进程调度"><a href="#进程调度" class="headerlink" title="进程调度"></a>进程调度</h3><ol>
+<li><h4 id="进程调度策略：先进先出，时间片轮转，普通调度，批调度，高优先级抢先"><a href="#进程调度策略：先进先出，时间片轮转，普通调度，批调度，高优先级抢先" class="headerlink" title="进程调度策略：先进先出，时间片轮转，普通调度，批调度，高优先级抢先"></a>进程调度策略：先进先出，时间片轮转，普通调度，批调度，高优先级抢先</h4><ul>
+<li>子进程与父进程的调度没有固定顺序；不能假设子进程一定会在父进程之后执行，也不能假设子进程一定会在父进程之前结束</li>
+</ul>
+</li>
+<li><h4 id="进程调度策略函数：头文件“sched-h”"><a href="#进程调度策略函数：头文件“sched-h”" class="headerlink" title="进程调度策略函数：头文件“sched.h”"></a>进程调度策略函数：头文件“sched.h”</h4><ul>
+<li>获取进程调度策略：<code>int sched_getscheduler(pid_t pid);</code></li>
+<li>设置进程调度策略：<code>int sched_setscheduler(pid_t pid, int policy, const struct sched_param * sp);</code></li>
+<li>获取进程调度参数：<code>int sched_getparam(pid_t pid, struct sched_param * sp);</code></li>
+<li>设置进程调度参数：<code>int sched_setparam(pid_t pid, const struct sched_param * sp);</code></li>
+</ul>
+</li>
+<li><h4 id="进程优先级调整：头文件“sys-time-h”和“sys-resource-h”"><a href="#进程优先级调整：头文件“sys-time-h”和“sys-resource-h”" class="headerlink" title="进程优先级调整：头文件“sys/time.h”和“sys/resource.h”"></a>进程优先级调整：头文件“sys/time.h”和“sys/resource.h”</h4><ul>
+<li>改变进程优先级：<code>int nice(int inc);</code>（头文件“unistd.h”）</li>
+<li>获取进程优先级：<code>int getpriority(int which, int who);</code></li>
+<li>设置进程优先级：<code>int setpriority(int which, int who, int prio);</code></li>
+</ul>
+</li>
+<li><h4 id="处理器亲和性-该进程倾向于在第几号cpu上去做-：头文件“sched-h”"><a href="#处理器亲和性-该进程倾向于在第几号cpu上去做-：头文件“sched-h”" class="headerlink" title="处理器亲和性(该进程倾向于在第几号cpu上去做)：头文件“sched.h”"></a>处理器亲和性(该进程倾向于在第几号cpu上去做)：头文件“sched.h”</h4><ul>
+<li>获取进程的处理器亲和性：<code>int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t * mask);</code></li>
+<li>设置进程的处理器亲和性：<code>int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t * mask);</code></li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="进程终止"><a href="#进程终止" class="headerlink" title="进程终止"></a>进程终止</h3><ol>
+<li><h4 id="终止进程函数：kill"><a href="#终止进程函数：kill" class="headerlink" title="终止进程函数：kill()"></a>终止进程函数：kill()</h4><ul>
+<li>头文件“sys/types.h”和“signal.h”</li>
+<li>原型：<code>int kill(pid_t pid, int sig);</code></li>
+<li>函数参数：pid为子进程ID，sig应为进程终止信号SIGTERM</li>
+</ul>
+</li>
+<li><h4 id="等待进程结束函数：wait"><a href="#等待进程结束函数：wait" class="headerlink" title="等待进程结束函数：wait()"></a>等待进程结束函数：wait()</h4><ul>
+<li>原型：<code>pid_t wait(int * status);</code>  <code>pid_t waitpid(pid_t pid, int * status, int options);</code></li>
+<li>阻塞主调进程，直到一个子进程结束</li>
+<li>WEXITSTATUS宏：查看子进程的退出码</li>
+<li>WIFEXITED宏：确定子进程的退出状态是正常退出，还是未处理信号导致的意外死亡<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;    //  必须包含此头文件，否则与wait共用体冲突</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">spawn</span><span class="params">( <span class="keyword">char</span> * program, <span class="keyword">char</span> ** arg_list )</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">char</span> * arg_list[] = &#123; (<span class="keyword">char</span>*)<span class="string">&quot;ls&quot;</span>, (<span class="keyword">char</span>*)<span class="string">&quot;-l&quot;</span>, (<span class="keyword">char</span>*)<span class="string">&quot;/&quot;</span>, <span class="literal">NULL</span> &#125;;</span><br><span class="line">spawn( (<span class="keyword">char</span>*)<span class="string">&quot;ls&quot;</span>, arg_list );</span><br><span class="line"><span class="keyword">int</span> child_status;</span><br><span class="line">wait( &amp;child_status );    <span class="comment">//  等待子进程结束</span></span><br><span class="line"><span class="keyword">if</span>( WIFEXITED( child_status ) )    <span class="comment">//  判断子进程是否正常退出</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Exited normally with &quot;</span> &lt;&lt; WEXITSTATUS(child_status) &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Exited abnormally.&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Done!\n&quot;</span>;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//  创建一个子进程运行新程序</span></span><br><span class="line"><span class="comment">//  program为程序名，arg_list为程序的参数列表；返回值为子进程id</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">spawn</span><span class="params">( <span class="keyword">char</span> * program, <span class="keyword">char</span> ** args )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">pid_t</span> child_pid = fork();	<span class="comment">//  复制进程</span></span><br><span class="line"><span class="keyword">if</span>( child_pid != <span class="number">0</span> )		<span class="comment">//  此为父进程</span></span><br><span class="line">    <span class="keyword">return</span> child_pid;</span><br><span class="line"><span class="keyword">else</span>				<span class="comment">//  此为子进程</span></span><br><span class="line">&#123;</span><br><span class="line">    execvp( program, args );	<span class="comment">//  执行程序，按路径查找</span></span><br><span class="line">    <span class="comment">//  只有发生错误时，该函数才返回</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">&quot;Error occurred when executing execvp.\n&quot;</span>;</span><br><span class="line">    <span class="built_in">abort</span> ();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="僵尸进程"><a href="#僵尸进程" class="headerlink" title="僵尸进程"></a>僵尸进程</h3><ol>
+<li><h4 id="子进程已结束，但父进程未调用wait-函数等待"><a href="#子进程已结束，但父进程未调用wait-函数等待" class="headerlink" title="子进程已结束，但父进程未调用wait()函数等待"></a>子进程已结束，但父进程未调用wait()函数等待</h4><ul>
+<li>子进程已终止，但没有被正确清除，成为僵尸进程</li>
+</ul>
+</li>
+<li><h4 id="清除子进程的手段"><a href="#清除子进程的手段" class="headerlink" title="清除子进程的手段"></a>清除子进程的手段</h4><ul>
+<li>父进程调用wait()函数可确保子进程被清除</li>
+<li>即使子进程在父进程调用wait()函数前已死亡（成为僵尸），其退出状态也可以被抽取出来，然后被清除</li>
+<li>未清除的子进程自动被init进程收养</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="子进程异步清除"><a href="#子进程异步清除" class="headerlink" title="子进程异步清除"></a>子进程异步清除</h3><ol>
+<li><h4 id="SIGCHLD信号：子进程终止时，向父进程自动发送，编写此信号处理例程，异步清除子进程"><a href="#SIGCHLD信号：子进程终止时，向父进程自动发送，编写此信号处理例程，异步清除子进程" class="headerlink" title="SIGCHLD信号：子进程终止时，向父进程自动发送，编写此信号处理例程，异步清除子进程"></a>SIGCHLD信号：子进程终止时，向父进程自动发送，编写此信号处理例程，异步清除子进程</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="keyword">sig_atomic_t</span> child_exit_status;</span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CleanUp</span><span class="params">(<span class="keyword">int</span> sig_num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> status;</span><br><span class="line">    wait(&amp;status);              <span class="comment">//  清除子进程,子进程的状态返回到了status中</span></span><br><span class="line">    child_exit_status = status; <span class="comment">//  存储子进程的状态</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="comment">//  处理SIGCHLD信号</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">sa</span>;</span></span><br><span class="line"><span class="built_in">memset</span>( &amp;sa, <span class="number">0</span>, <span class="keyword">sizeof</span>(sa) );</span><br><span class="line">sa.sa_handler = &amp;CleanUp;</span><br><span class="line">sigaction( SIGCHLD, &amp;sa, <span class="literal">NULL</span> );</span><br><span class="line"></span><br><span class="line"><span class="comment">//  正常处理代码在此，例如调用fork()创建子进程</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><h3 id="守护进程"><a href="#守护进程" class="headerlink" title="守护进程"></a>守护进程</h3><ol>
+<li><h4 id="创建守护进程的步骤"><a href="#创建守护进程的步骤" class="headerlink" title="创建守护进程的步骤"></a>创建守护进程的步骤</h4><ul>
+<li>创建新进程：新进程将成为未来的守护进程</li>
+<li>守护进程的父进程退出：保证祖父进程确认父进程已结束，且守护进程不是组长进程</li>
+<li>守护进程创建新进程组和新会话：并成为两者的首进程，此时刚创建的新会话还没有关联控制终端</li>
+<li>改变工作目录：守护进程一般随系统启动，工作目录不应继续使用继承的工作目录</li>
+<li>重设文件权限掩码：不需要继承文件权限掩码</li>
+<li>关闭所有文件描述符：不需要继承任何打开的文件描述符</li>
+<li>标准流重定向到/dev/null<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/fs.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">pid_t</span> pid = fork();</span><br><span class="line"><span class="keyword">if</span>( pid == <span class="number">-1</span> )		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>( pid != <span class="number">0</span> )		<span class="built_in">exit</span>( EXIT_SUCCESS );</span><br><span class="line"><span class="comment">//  子进程</span></span><br><span class="line"><span class="keyword">if</span>( setsid() == <span class="number">-1</span> )		<span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line"><span class="comment">//  设置工作目录</span></span><br><span class="line"><span class="keyword">if</span>( chdir( <span class="string">&quot;/&quot;</span> ) == <span class="number">-1</span> )	<span class="keyword">return</span> <span class="number">-3</span>;</span><br><span class="line"><span class="comment">//  重设文件权限掩码</span></span><br><span class="line">umask( <span class="number">0</span> );</span><br><span class="line"><span class="comment">//  关闭文件描述符</span></span><br><span class="line"><span class="keyword">for</span>( <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++ )	close( i );</span><br><span class="line"><span class="comment">//  重定向标准流</span></span><br><span class="line">open( <span class="string">&quot;/dev/null&quot;</span>, O_RDWR );	<span class="comment">// stdin</span></span><br><span class="line">dup( <span class="number">0</span> );				<span class="comment">// stdout</span></span><br><span class="line">dup( <span class="number">0</span> );				<span class="comment">// stderr</span></span><br><span class="line"><span class="comment">//  守护进程的实际工作代码在此</span></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h4 id="守护进程创建函数daemon"><a href="#守护进程创建函数daemon" class="headerlink" title="守护进程创建函数daemon()"></a>守护进程创建函数daemon()</h4><ul>
+<li>实现了前述功能，减轻编写守护进程的负担</li>
+<li>原型：<code>int daemon(int nochdir, int noclose);</code></li>
+<li>参数：若nochdir非0，不更改工作目录；若noclose非0，不关闭所有打开的文件描述符；一般均设为0</li>
+<li>返回值：成功时返回0，失败时返回-1，并设置errno值</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="四-进程间通信"><a href="#四-进程间通信" class="headerlink" title="四. 进程间通信"></a>四. 进程间通信</h1><ol>
+<li><h3 id="管道：相关进程间的顺序通信"><a href="#管道：相关进程间的顺序通信" class="headerlink" title="管道：相关进程间的顺序通信"></a>管道：相关进程间的顺序通信</h3><ol>
+<li><h4 id="管道（pipe）的性质与意义"><a href="#管道（pipe）的性质与意义" class="headerlink" title="管道（pipe）的性质与意义"></a>管道（pipe）的性质与意义</h4><ul>
+<li>管道是允许单向通信的自动同步设备（半双工）</li>
+<li>数据在写入端写入，在读取端读取</li>
+<li>管道为串行设备，数据的读取顺序与写入顺序完全相同</li>
+</ul>
+</li>
+<li><h4 id="管道的用途"><a href="#管道的用途" class="headerlink" title="管道的用途"></a>管道的用途</h4><ul>
+<li>只能用于有亲缘关系的进程，例如父进程和子进程之间通信</li>
+</ul>
+</li>
+<li><h4 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h4><ul>
+<li>管道的数据容量有限，一般为一个内存页面</li>
+<li>如果写入速度超过读取速度，写入进程将阻塞，直到容量有空闲</li>
+<li>如果读取速度超过写入速度，读取进程将阻塞，直到管道有数据</li>
+</ul>
+</li>
+<li><h4 id="pipe函数：创建管道"><a href="#pipe函数：创建管道" class="headerlink" title="pipe函数：创建管道"></a>pipe函数：创建管道</h4><ul>
+<li>头文件：“unistd.h”和“fcntl.h”</li>
+<li>原型：<code>int pipe(int pipefd[2]); </code></li>
+<li>参数：一个包含两个元素的整数数组，元素类型为文件描述符，0号元为读取文件描述符，1号元为写入文件描述符</li>
+<li>返回值：成功时返回0，不成功时返回-1，并设置errno值<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> buf_size = <span class="number">4096</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  向stream中写入count次msg</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *msg, <span class="keyword">int</span> count, FILE *stream)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">for</span> (; count &gt; <span class="number">0</span>; --count)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(stream, <span class="string">&quot;%s\n&quot;</span>, msg);</span><br><span class="line">    fflush(stream);</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  从stream中读取数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Read</span><span class="params">(FILE *stream)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">char</span> buf[buf_size];</span><br><span class="line"><span class="comment">//  一直读取到流的尾部</span></span><br><span class="line"><span class="keyword">while</span> (!feof(stream) &amp;&amp; !ferror(stream) &amp;&amp; fgets(buf, <span class="keyword">sizeof</span>(buf), stream) != <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stdout</span>, <span class="string">&quot;Data received: \n&quot;</span>);</span><br><span class="line">    <span class="built_in">fputs</span>(buf, <span class="built_in">stdout</span>);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">int</span> fds[<span class="number">2</span>];</span><br><span class="line">pipe(fds);          <span class="comment">//  创建管道</span></span><br><span class="line"><span class="keyword">pid_t</span> pid = fork(); <span class="comment">//  创建子进程</span></span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">0</span>)</span><br><span class="line">&#123;                <span class="comment">//  子进程</span></span><br><span class="line">    close(fds[<span class="number">1</span>]); <span class="comment">//  只读取，关闭管道写入端</span></span><br><span class="line">    <span class="comment">//  将文件描述符转换为FILE *，以方便C/C++标准库函数处理</span></span><br><span class="line">    FILE *stream = fdopen(fds[<span class="number">0</span>], <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    Read(stream);  <span class="comment">//  从流中读取数据</span></span><br><span class="line">    close(fds[<span class="number">0</span>]); <span class="comment">//  关闭管道读取端</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>)</span><br><span class="line">&#123;                     <span class="comment">//  父进程</span></span><br><span class="line">    <span class="keyword">char</span> buf[buf_size]; <span class="comment">//  数据缓冲区，末尾封装两个‘\0’</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; buf_size - <span class="number">2</span>; i++)</span><br><span class="line">    buf[i] = <span class="string">&#x27;A&#x27;</span> + i % <span class="number">26</span>;</span><br><span class="line">    buf[buf_size - <span class="number">1</span>] = buf[buf_size - <span class="number">2</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">    close(fds[<span class="number">0</span>]); <span class="comment">//  只写入，关闭管道读取端</span></span><br><span class="line">    FILE *stream = fdopen(fds[<span class="number">1</span>], <span class="string">&quot;w&quot;</span>);</span><br><span class="line">    Write(buf, <span class="number">3</span>, stream);</span><br><span class="line">    close(fds[<span class="number">1</span>]); <span class="comment">//  关闭管道写入端</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><h4 id="等位文件描述符"><a href="#等位文件描述符" class="headerlink" title="等位文件描述符"></a>等位文件描述符</h4><ul>
+<li>共享相同的文件位置和状态标志设置</li>
+</ul>
+</li>
+<li><h4 id="dup-函数：将两个文件描述符等位处理"><a href="#dup-函数：将两个文件描述符等位处理" class="headerlink" title="dup()函数：将两个文件描述符等位处理"></a>dup()函数：将两个文件描述符等位处理</h4><ul>
+<li>原型：<code>int dup(int oldfd);</code> <code>int dup2(int oldfd, int newfd);</code></li>
+<li>参数：创建oldfd的一份拷贝，单参数版本选择数值最小的未用文件描述符作为新的文件描述符；双参数版本使用newfd作为新的文件描述符，拷贝前尝试关闭newfd</li>
+<li>返回值：成功时返回新文件描述符，失败时返回-1，并设errno值</li>
+<li>示例：dup2(fd, STDIN_FILENO)关闭标准输入流，然后作为fd的副本重新打开<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> buf_size = <span class="number">4096</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">int</span> fds[<span class="number">2</span>];</span><br><span class="line">pipe(fds); <span class="comment">//  创建管道</span></span><br><span class="line"><span class="keyword">pid_t</span> pid = fork();</span><br><span class="line"><span class="keyword">if</span> (pid == (<span class="keyword">pid_t</span>)<span class="number">0</span>) <span class="comment">//  子进程</span></span><br><span class="line">&#123;</span><br><span class="line">    close(fds[<span class="number">0</span>]);                          <span class="comment">//  关闭管道读取端</span></span><br><span class="line">    dup2(fds[<span class="number">1</span>], STDOUT_FILENO);            <span class="comment">//  管道挂接到标准输出流</span></span><br><span class="line">    <span class="keyword">char</span> *args[] = &#123;<span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-l&quot;</span>, <span class="string">&quot;/&quot;</span>, <span class="literal">NULL</span>&#125;; <span class="comment">//  使用“ls”命令替换子进程</span></span><br><span class="line">    execvp(args[<span class="number">0</span>], args);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="comment">//  父进程</span></span><br><span class="line">&#123;</span><br><span class="line">    close(fds[<span class="number">1</span>]); <span class="comment">//  关闭管道写入端</span></span><br><span class="line">    <span class="keyword">char</span> buf[buf_size];</span><br><span class="line">    FILE *stream = fdopen(fds[<span class="number">0</span>], <span class="string">&quot;r&quot;</span>); <span class="comment">//  以读模式打开管道读取端，返回文件指针</span></span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stdout</span>, <span class="string">&quot;Data received: \n&quot;</span>);</span><br><span class="line">    <span class="comment">//  在流未结束，未发生读取错误，且能从流中正常读取字符串时，输出读取到的字符串</span></span><br><span class="line">    <span class="keyword">while</span> (!feof(stream) &amp;&amp; !ferror(stream) &amp;&amp; fgets(buf, <span class="keyword">sizeof</span>(buf), stream) != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">fputs</span>(buf, <span class="built_in">stdout</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    close(fds[<span class="number">0</span>]);         <span class="comment">//  关闭管道读取端</span></span><br><span class="line">    waitpid(pid, <span class="literal">NULL</span>, <span class="number">0</span>); <span class="comment">//  等待子进程结束</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="进程信号量：进程间通信的同步控制机制"><a href="#进程信号量：进程间通信的同步控制机制" class="headerlink" title="进程信号量：进程间通信的同步控制机制"></a>进程信号量：进程间通信的同步控制机制</h3><ol>
+<li><h4 id="进程信号量：-System-V信号量"><a href="#进程信号量：-System-V信号量" class="headerlink" title="进程信号量： System V信号量"></a>进程信号量： System V信号量</h4><ul>
+<li>可以使用同步机制确定进程的先后执行关系</li>
+<li>头文件：“sys/types.h”、“sys/ipc.h”和“sys/sem.h”</li>
+</ul>
+</li>
+<li><h4 id="信号量的定义"><a href="#信号量的定义" class="headerlink" title="信号量的定义"></a>信号量的定义</h4><ul>
+<li>信号量是一类特殊的计数器，其值为非负整数，用于进程或线程同步</li>
+</ul>
+</li>
+<li><h4 id="信号量的操作"><a href="#信号量的操作" class="headerlink" title="信号量的操作"></a>信号量的操作</h4><ul>
+<li>等待（wait）操作（P）：信号量的值递减1后返回；如果值为0，则阻塞操作，直到信号量值为正（其他进程或线程释放了信号量），然后递减1后返回</li>
+<li>发布（post）操作（V）：信号量的值递增1后返回；如果信号量值原为0，则其中一个等待该信号量的进程或线程取消阻塞</li>
+</ul>
+</li>
+<li><h4 id="Linux信号量实现：两个版本"><a href="#Linux信号量实现：两个版本" class="headerlink" title="Linux信号量实现：两个版本"></a>Linux信号量实现：两个版本</h4><ul>
+<li>进程信号量多用于进程同步，POSIX标准实现多用于线程同步</li>
+</ul>
+</li>
+<li><h4 id="使用进程信号量时的注意事项"><a href="#使用进程信号量时的注意事项" class="headerlink" title="使用进程信号量时的注意事项"></a>使用进程信号量时的注意事项</h4><ul>
+<li>每次创建和管理的进程信号量不是一个，而是一个集合（数组），该集合可能包含多个进程信号量</li>
+<li>使用键值key关联进程信号量集，但进程信号量集本身由进程信号量的标识符semid标识，函数调用时几乎总是使用semid——可以这么理解：semid对内，key对外</li>
+</ul>
+</li>
+<li><h4 id="semget-函数：创建或获取进程信号量集"><a href="#semget-函数：创建或获取进程信号量集" class="headerlink" title="semget()函数：创建或获取进程信号量集"></a>semget()函数：创建或获取进程信号量集</h4><ul>
+<li>原型：<code>int semget(key_t key, int nsems, int semflg);</code></li>
+<li>参数：key为键值，多个进程可以通过此键值访问同一进程信号量；nsems为需要创建的进程信号量集的进程信号量元素个数（不是进程信号量的信号数）， semflg为访问标志</li>
+<li>返回值：成功时返回进程信号量集的标识符，失败时返回-1，并设置errno值</li>
+<li>要获取已分配的进程信号量集，使用原先键值查询，此时进程信号量集的元素个数可设置为0</li>
+<li>键值IPC_PRIVATE用于创建当前进程的私有进程信号量集</li>
+<li>使用IPC_CREAT和IPC_EXCL创建进程信号量集，后者要求创建新的唯一的进程信号量集，若其已存在，则出错</li>
+</ul>
+</li>
+<li><h4 id="控制和管理进程信号量集"><a href="#控制和管理进程信号量集" class="headerlink" title="控制和管理进程信号量集"></a>控制和管理进程信号量集</h4><ul>
+<li>原型：<code>int semctl(int semid, int semnum, int cmd, …);</code></li>
+<li>参数：semid为进程信号量集的标识符，semnum为进程信号量集的元素下标，cmd为指定操作，第四个参数arg可有可无，与cmd有关</li>
+<li>返回值：成功时与cmd有关，失败时返回-1，并设置errno值</li>
+<li>调用semctl()函数的进程的有效用户ID必须与分配进程信号量集的用户权限匹配</li>
+</ul>
+</li>
+<li><h4 id="释放（删除）进程信号量集：IPC-RMID"><a href="#释放（删除）进程信号量集：IPC-RMID" class="headerlink" title="释放（删除）进程信号量集：IPC_RMID"></a>释放（删除）进程信号量集：IPC_RMID</h4><ul>
+<li>最后一个使用进程信号量的进程负责清除进程信号量集</li>
+<li>进程信号量集释放后，内存自动释放</li>
+<li>调用说明：cmd为IPC_RMID，semnum被忽略，arg不需要；如果需要arg，定义union semun类型的变量并作为参数，部分系统可能未定义union semun类型，需按如下格式补充定义：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">union</span> <span class="title">semun</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> val;	<span class="comment">//  供SETVAL使用的值</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span> * <span class="title">buf</span>;</span>	<span class="comment">//  供IPC_STAT、IPC_SET使用的缓冲区</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="keyword">int</span> * <span class="built_in">array</span>;	<span class="comment">//  供GETALL、SETALL使用的数组</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">seminfo</span> * __<span class="title">buf</span>;</span>	<span class="comment">//  供IPC_INFO使用的缓冲区</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h4 id="初始化进程信号量集：SETALL"><a href="#初始化进程信号量集：SETALL" class="headerlink" title="初始化进程信号量集：SETALL"></a>初始化进程信号量集：SETALL</h4><ul>
+<li>第一个参数semid为进程信号量集的标识符，第二个参数semnum为0，第三个参数cmd为SETALL，第四个参数arg必须为union semun类型的数据对象</li>
+<li>union semun的array字段：指向无符号短整型数组首元素的指针，该数组保存进程信号量集的所有信号量的信号数</li>
+</ul>
+</li>
+<li><h4 id="其他常用命令参数"><a href="#其他常用命令参数" class="headerlink" title="其他常用命令参数"></a>其他常用命令参数</h4><ul>
+<li>IPC_STAT/IPC_SET（获取或设置进程信号量信息）、GETALL（获取全部信号量的信号数）、 GETVAL/SETVAL （获取或设置单个信号量的信号数）等</li>
+</ul>
+</li>
+<li><h4 id="获取与释放"><a href="#获取与释放" class="headerlink" title="获取与释放"></a>获取与释放</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  获取与key关联的二元信号量集，必要时会分配之</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">AcquireBinarySemaphore</span><span class="params">(<span class="keyword">key_t</span> key, <span class="keyword">int</span> sem_flags)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">return</span> semget(key, <span class="number">1</span>, sem_flags);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//  释放二元信号量集，单一元素</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ReleaseBinarySemaphore</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="class"><span class="keyword">union</span> <span class="title">semun</span> <span class="title">ignored</span>;</span></span><br><span class="line"><span class="keyword">return</span> semctl(semid, <span class="number">1</span>, IPC_RMID, ignored);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//  初始化二元信号量集，单一元素，信号量初始值为1</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">InitializeBinarySemaphore</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="keyword">int</span> values[<span class="number">1</span>] = &#123;<span class="number">1</span>&#125;;</span><br><span class="line"><span class="class"><span class="keyword">union</span> <span class="title">semun</span> <span class="title">needed</span> =</span> &#123;.<span class="built_in">array</span> = values&#125;;</span><br><span class="line"><span class="keyword">return</span> semctl(semid, <span class="number">0</span>, SETALL, needed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><h4 id="等待与发布进程信号量函数semop"><a href="#等待与发布进程信号量函数semop" class="headerlink" title="等待与发布进程信号量函数semop()"></a>等待与发布进程信号量函数semop()</h4><ul>
+<li>原型：<code>int semop(int semid, struct sembuf * sops, size_t nsops);</code></li>
+<li>参数：semid为待操作的进程信号量集的标识符； sops为操作数组，nsops为操作数组的元素个数</li>
+<li>返回值：成功时为进程信号量集的标识符，失败时返回-1，并设置errno值</li>
+</ul>
+</li>
+<li><h4 id="struct-sembuf类型的成员"><a href="#struct-sembuf类型的成员" class="headerlink" title="struct sembuf类型的成员"></a>struct sembuf类型的成员</h4><ul>
+<li>sem_num：需要操作的进程信号量集中的信号量元素下标</li>
+<li>sem_op：指定信号量操作的整数（递增或递减信号量的信号数）<ul>
+<li>如果sem_op为正数，则立即加到信号量上（V操作）</li>
+<li>如果sem_op为负数，则从信号量上减去（P操作）</li>
+<li>如果会使结果为负数，则阻塞进程，直到信号量的信号数不小于sem_op的绝对值</li>
+<li>如果sem_op为0，则阻塞进程，直到信号量的信号数为0</li>
+</ul>
+</li>
+<li>sem_flg：指定IPC_NOWAIT则不阻塞进程，指定SEM_UNDO则在进程退出时取消操作</li>
+</ul>
+</li>
+<li><h4 id="等待与发布"><a href="#等待与发布" class="headerlink" title="等待与发布"></a>等待与发布</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  P原语：等待二元信号量，信号数非正时阻塞</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">WaitBinarySemaphore</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">ops</span>[1];</span></span><br><span class="line">ops[<span class="number">0</span>].sem_num = <span class="number">0</span>;</span><br><span class="line">ops[<span class="number">0</span>].sem_op = <span class="number">-1</span>;</span><br><span class="line">ops[<span class="number">0</span>].sem_flg = SEM_UNDO;</span><br><span class="line"><span class="keyword">return</span> semop(semid, ops, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//  V原语：发布二元信号量，增加信号数后立即返回</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">PostBinarySemaphore</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">ops</span>[1];</span></span><br><span class="line">ops[<span class="number">0</span>].sem_num = <span class="number">0</span>;</span><br><span class="line">ops[<span class="number">0</span>].sem_op = <span class="number">1</span>;</span><br><span class="line">ops[<span class="number">0</span>].sem_flg = SEM_UNDO;</span><br><span class="line"><span class="keyword">return</span> semop(semid, ops, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><h3 id="共享内存：允许多个进程读写同一片内存区域"><a href="#共享内存：允许多个进程读写同一片内存区域" class="headerlink" title="共享内存：允许多个进程读写同一片内存区域"></a>共享内存：允许多个进程读写同一片内存区域</h3><ol>
+<li><h4 id="共享内存的意义：快捷方便的本地通信机制"><a href="#共享内存的意义：快捷方便的本地通信机制" class="headerlink" title="共享内存的意义：快捷方便的本地通信机制"></a>共享内存的意义：快捷方便的本地通信机制</h4><ul>
+<li>头文件：“sys/ipc.h”和“sys/shm.h”</li>
+</ul>
+</li>
+<li><h4 id="共享内存编程原则"><a href="#共享内存编程原则" class="headerlink" title="共享内存编程原则"></a>共享内存编程原则</h4><ul>
+<li>系统没有对共享内存操作提供任何缺省同步行为</li>
+<li>如果需要，程序员自主设计同步策略：使用进程信号量</li>
+</ul>
+</li>
+<li><h4 id="共享内存使用过程"><a href="#共享内存使用过程" class="headerlink" title="共享内存使用过程"></a>共享内存使用过程</h4><ul>
+<li>某个进程分配一个内存段，其他需要访问该内存段的进程连接（attach）该内存段</li>
+<li>完成访问后，进程拆卸（detach）该内存段</li>
+<li>某个时刻，一个进程释放该内存段</li>
+</ul>
+</li>
+<li><h4 id="Linux内存模型"><a href="#Linux内存模型" class="headerlink" title="Linux内存模型"></a>Linux内存模型</h4><ul>
+<li>每个进程的虚拟地址空间按页（page）编址，页缺省为4096字节（不同硬件架构和操作系统可能不同，使用getpagesize()函数获取系统值）</li>
+<li>每个进程维持从内存地址到虚拟页面地址的映射</li>
+<li>多个进程可能使用同一虚拟页面，同样的数据在不同进程中的地址并不需要相同</li>
+<li>分配新的共享内存段将创建虚拟内存页面，其他进程连接该共享内存段即可访问</li>
+<li>共享内存段的分配只有由一个进程负责，释放也同样</li>
+</ul>
+</li>
+<li><h4 id="shmget-函数：获取或分配一段共享内存"><a href="#shmget-函数：获取或分配一段共享内存" class="headerlink" title="shmget()函数：获取或分配一段共享内存"></a>shmget()函数：获取或分配一段共享内存</h4><ul>
+<li>原型：int shmget( key_t key, size_t size, int shmflg );</li>
+<li>参数：key为内存段整数键值，size为内存段分配的字节数（圆整至4096字节整数倍），shmflg为创建共享内存段的位标志</li>
+<li>键值参数key<ul>
+<li>其他进程通过键值key访问该内存段，任意设定的键值可能和其他进程的共享内存段键值冲突，使用IPC_PRIVATE以确保无冲突</li>
+</ul>
+</li>
+<li>创建标志：IPC_CREAT（创建）、IPC_EXCL（独占）<ul>
+<li>后者与前者合并使用，如果键值已使用，则创建失败</li>
+<li>如果未设IPC_EXCL，则在键值已经存在时，返回其代表的共享内存段，而不是创建一个新的共享内存段</li>
+</ul>
+</li>
+<li>位标志参数<ul>
+<li>模式标志：以9位数字表示宿主、组用户和其他人的访问控制权</li>
+<li>常数位于头文件“sys/stat.h”</li>
+</ul>
+</li>
+<li>返回值：共享内存段的标识符</li>
+<li>常用模式常数<ul>
+<li>S_IRUSR�

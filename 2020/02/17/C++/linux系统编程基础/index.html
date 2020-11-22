@@ -1,0 +1,648 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="李素晴"><meta name="copyright" content="李素晴"><meta name="generator" content="Hexo 5.1.1"><meta name="theme" content="hexo-theme-yun"><title>Linux系统编程基础 | Lisuqing's Personal Website</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.21/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_2138379_1l6ur2tg9f2.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/photo/icon.png"><link rel="mask-icon" href="/photo/icon.png" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"lisuqing2020.github.io","root":"/","title":"李素晴的日记","version":"1.2.0","mode":"time","copycode":true,"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script data-ad-client="ca-pub-9695375546022807" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><meta name="description" content="一. 程序执行环境 参数列表 linux命令行规范 短参数：以单横开头，后跟单一字符，例如ls -h 长参数：以双横开头，后跟字符串，例如ls –help   程序访问参数列表的方法 主函数的参数argc和argv  程序接受命令行的输入参数，并解释之 1234567891011121314#include &lt;iostream&gt;using namespace std;int mai">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux系统编程基础">
+<meta property="og:url" content="http://lisuqing2020.github.io/2020/02/17/C++/linux%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="Lisuqing&#39;s Personal Website">
+<meta property="og:description" content="一. 程序执行环境 参数列表 linux命令行规范 短参数：以单横开头，后跟单一字符，例如ls -h 长参数：以双横开头，后跟字符串，例如ls –help   程序访问参数列表的方法 主函数的参数argc和argv  程序接受命令行的输入参数，并解释之 1234567891011121314#include &lt;iostream&gt;using namespace std;int mai">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-02-16T16:09:49.000Z">
+<meta property="article:modified_time" content="2020-11-22T05:30:19.278Z">
+<meta property="article:author" content="李素晴">
+<meta property="article:tag" content="thuC++">
+<meta name="twitter:card" content="summary"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="李素晴"><img width="96" loading="lazy" src="/photo/avatar.jpg" alt="李素晴"></a><div class="site-author-name"><a href="/about/">李素晴</a></div><a class="site-name" href="/about/site.html">Lisuqing's Personal Website</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">227</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder--line"></use></svg></span><span class="site-state-item-count">10</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag--line"></use></svg></span><span class="site-state-item-count">21</span></a></div><a class="site-state-item hty-icon-button" href="/about" title="留言板"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-clipboard-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1164919034&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/lisuqing2020" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:lisuqing2020@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://juejin.im/user/676954896099847" title="掘金" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-juejin"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://nobilta.github.io/" title="东农吴彦祖" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a><a class="links-item hty-icon-button" target="_blank" rel="noopener" href="https://happycpp.github.io/" title="渣王" style="color:hotpink"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-women-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">一. 程序执行环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%88%97%E8%A1%A8"><span class="toc-number">1.0.1.</span> <span class="toc-text">参数列表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#linux%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%A7%84%E8%8C%83"><span class="toc-number">1.0.1.1.</span> <span class="toc-text">linux命令行规范</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%BF%E9%97%AE%E5%8F%82%E6%95%B0%E5%88%97%E8%A1%A8%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.0.1.2.</span> <span class="toc-text">程序访问参数列表的方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%89%E9%A1%B9%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.0.1.3.</span> <span class="toc-text">选项数组的定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0getopt-long"><span class="toc-number">1.0.1.4.</span> <span class="toc-text">函数getopt_long()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95"><span class="toc-number">1.0.1.5.</span> <span class="toc-text">参数处理方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E7%A8%8B%E5%BA%8F%EF%BC%8C%E6%8E%A5%E5%8F%97%E5%A6%82%E4%B8%8B%E4%B8%89%E4%B8%AA%E9%80%89%E9%A1%B9%E5%B9%B6%E6%89%A7%E8%A1%8C%E6%AD%A3%E7%A1%AE%E6%93%8D%E4%BD%9C"><span class="toc-number">1.0.1.6.</span> <span class="toc-text">编写程序，接受如下三个选项并执行正确操作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.0.2.</span> <span class="toc-text">环境变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B8%E5%9E%8BLinux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.0.2.1.</span> <span class="toc-text">典型Linux环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shell%E5%A4%84%E7%90%86"><span class="toc-number">1.0.2.2.</span> <span class="toc-text">shell处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%86%85%E9%83%A8%E5%AE%9A%E4%B9%89%E6%A0%BC%E5%BC%8F%EF%BC%9AVARIABLE-value"><span class="toc-number">1.0.2.3.</span> <span class="toc-text">环境变量内部定义格式：VARIABLE&#x3D;value</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8getenv-%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%80%BC"><span class="toc-number">1.0.2.4.</span> <span class="toc-text">使用getenv()函数返回环境变量的值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8Fenviron%E5%A4%84%E7%90%86%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.0.2.5.</span> <span class="toc-text">使用全局变量environ处理环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%A8%8B%E5%BA%8F%EF%BC%8C%E5%9C%A8%E7%94%A8%E6%88%B7%E6%9C%AA%E6%8C%87%E5%AE%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%8D%E6%97%B6%E4%BD%BF%E7%94%A8%E7%BC%BA%E7%9C%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%8D%E7%A7%B0"><span class="toc-number">1.0.2.6.</span> <span class="toc-text">编写客户端程序，在用户未指定服务器名时使用缺省服务器名称</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E9%80%80%E5%87%BA%E7%A0%81"><span class="toc-number">1.0.3.</span> <span class="toc-text">程序退出码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%EF%BC%9A%E7%BB%93%E6%9D%9F%E6%97%B6%E4%BC%A0%E9%80%92%E7%BB%99%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%95%B4%E5%9E%8B%E6%95%B0%E6%8D%AE"><span class="toc-number">1.0.3.1.</span> <span class="toc-text">程序：结束时传递给操作系统的整型数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%EF%BC%9A%E5%93%8D%E5%BA%94%E7%A8%8B%E5%BA%8F%E9%80%80%E5%87%BA%E7%A0%81%EF%BC%8C%E5%A6%82%E6%9E%9C%E5%BF%85%E8%A6%81%EF%BC%8C%E6%89%A7%E8%A1%8C%E5%90%8E%E7%BB%AD%E5%A4%84%E7%90%86"><span class="toc-number">1.0.3.2.</span> <span class="toc-text">操作系统：响应程序退出码，如果必要，执行后续处理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-number">1.0.4.</span> <span class="toc-text">系统调用错误处理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E9%80%BB%E8%BE%91"><span class="toc-number">1.0.4.1.</span> <span class="toc-text">实现逻辑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%A4%E4%B8%AA%E4%B8%BB%E8%A6%81%E9%97%AE%E9%A2%98"><span class="toc-number">1.0.4.2.</span> <span class="toc-text">两个主要问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Linux%E4%BD%BF%E7%94%A8%E6%95%B4%E6%95%B0%E8%A1%A8%E7%A4%BA%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E9%94%99%E8%AF%AF"><span class="toc-number">1.0.4.3.</span> <span class="toc-text">Linux使用整数表示系统调用错误</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86"><span class="toc-number">1.0.5.</span> <span class="toc-text">资源管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BF%85%E9%A1%BB%E4%BA%88%E4%BB%A5%E6%98%8E%E7%A1%AE%E7%AE%A1%E7%90%86%E7%9A%84%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.0.5.1.</span> <span class="toc-text">必须予以明确管理的资源类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E6%B5%81%E7%A8%8B"><span class="toc-number">1.0.5.2.</span> <span class="toc-text">资源管理流程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%97%A5%E5%BF%97"><span class="toc-number">1.0.6.</span> <span class="toc-text">系统日志</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%EF%BC%9A%E7%B3%BB%E7%BB%9F%E6%88%96%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E7%9A%84%E8%AE%B0%E5%BD%95"><span class="toc-number">1.0.6.1.</span> <span class="toc-text">日志：系统或程序运行的记录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%97%A5%E5%BF%97%E8%BF%9B%E7%A8%8B%EF%BC%9Asyslogd-rsyslogd"><span class="toc-number">1.0.6.2.</span> <span class="toc-text">系统日志进程：syslogd&#x2F;rsyslogd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0%EF%BC%9Asyslog"><span class="toc-number">1.0.6.3.</span> <span class="toc-text">日志生成函数：syslog()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%89%93%E5%BC%80%E5%87%BD%E6%95%B0%EF%BC%9Aopenlog"><span class="toc-number">1.0.6.4.</span> <span class="toc-text">日志打开函数：openlog()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E8%BF%87%E6%BB%A4%E5%87%BD%E6%95%B0%EF%BC%9Asetlogmask"><span class="toc-number">1.0.6.5.</span> <span class="toc-text">日志过滤函数：setlogmask()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%85%B3%E9%97%AD%E5%87%BD%E6%95%B0%EF%BC%9Acloselog"><span class="toc-number">1.0.6.6.</span> <span class="toc-text">日志关闭函数：closelog()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="toc-number">1.0.7.</span> <span class="toc-text">用户信息</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UID%E3%80%81EUID%E3%80%81GID%E5%92%8CEGID"><span class="toc-number">1.0.7.1.</span> <span class="toc-text">UID、EUID、GID和EGID</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="toc-number">1.0.7.2.</span> <span class="toc-text">用户信息处理函数</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA"><span class="toc-number">2.</span> <span class="toc-text">二. 输入输出</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%B5%81"><span class="toc-number">2.0.1.</span> <span class="toc-text">标准输入输出流</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E6%B5%81%EF%BC%9Astdin-cin"><span class="toc-number">2.0.1.1.</span> <span class="toc-text">标准输入流：stdin&#x2F;cin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E8%BE%93%E5%87%BA%E6%B5%81%EF%BC%9Astdout-cout"><span class="toc-number">2.0.1.2.</span> <span class="toc-text">标准输出流：stdout&#x2F;cout</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E9%94%99%E8%AF%AF%E6%B5%81%EF%BC%9Astderr-cerr"><span class="toc-number">2.0.1.3.</span> <span class="toc-text">标准错误流：stderr&#x2F;cerr</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="toc-number">2.0.2.</span> <span class="toc-text">文件描述符</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E6%84%8F%E4%B9%89%E4%B8%8E%E7%9B%AE%E7%9A%84%EF%BC%9A%E5%9C%A8%E7%A8%8B%E5%BA%8F%E4%B8%AD%E4%BB%A3%E8%A1%A8%E6%96%87%E4%BB%B6"><span class="toc-number">2.0.2.1.</span> <span class="toc-text">文件描述符的意义与目的：在程序中代表文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E4%B8%BA%E9%9D%9E%E8%B4%9F%E6%95%B4%E6%95%B0%EF%BC%8C%E8%8C%83%E5%9B%B4%E4%BB%8E0%E8%87%B3OPEN-MAX"><span class="toc-number">2.0.2.2.</span> <span class="toc-text">文件描述符为非负整数，范围从0至OPEN_MAX</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="toc-number">2.0.2.3.</span> <span class="toc-text">文件描述符的缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E7%9A%84%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%B5%81%E7%9A%84%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="toc-number">2.0.2.4.</span> <span class="toc-text">预定义的标准输入输出流的文件描述符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="toc-number">2.0.2.5.</span> <span class="toc-text">文件描述符的创建</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#I-O%E5%87%BD%E6%95%B0"><span class="toc-number">2.0.3.</span> <span class="toc-text">I&#x2F;O函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%B8%8E%E9%AB%98%E7%BA%A7I-O%E5%87%BD%E6%95%B0"><span class="toc-number">2.0.3.1.</span> <span class="toc-text">基本与高级I&#x2F;O函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E5%87%BD%E6%95%B0open"><span class="toc-number">2.0.3.2.</span> <span class="toc-text">打开文件函数open()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E6%96%87%E4%BB%B6%E5%87%BD%E6%95%B0close"><span class="toc-number">2.0.3.3.</span> <span class="toc-text">关闭文件函数close()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%BB%E5%87%BD%E6%95%B0read"><span class="toc-number">2.0.3.4.</span> <span class="toc-text">读函数read()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%99%E5%87%BD%E6%95%B0write"><span class="toc-number">2.0.3.5.</span> <span class="toc-text">写函数write()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%95%A3%E8%AF%BB%E5%87%BD%E6%95%B0readv"><span class="toc-number">2.0.3.6.</span> <span class="toc-text">分散读函数readv()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9B%86%E4%B8%AD%E5%86%99%E5%87%BD%E6%95%B0writev"><span class="toc-number">2.0.3.7.</span> <span class="toc-text">集中写函数writev()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%8F%91%E9%80%81%E5%87%BD%E6%95%B0sendfile"><span class="toc-number">2.0.3.8.</span> <span class="toc-text">文件发送函数sendfile()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%A7%BB%E5%8A%A8%E5%87%BD%E6%95%B0splice"><span class="toc-number">2.0.3.9.</span> <span class="toc-text">数据移动函数splice()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%A7%BB%E5%8A%A8%E5%87%BD%E6%95%B0tee"><span class="toc-number">2.0.3.10.</span> <span class="toc-text">数据移动函数tee()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8E%A7%E5%88%B6%E5%87%BD%E6%95%B0fcntl"><span class="toc-number">2.0.3.11.</span> <span class="toc-text">文件控制函数fcntl()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6"><span class="toc-number">2.0.4.</span> <span class="toc-text">临时文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6%E6%97%B6%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">2.0.4.1.</span> <span class="toc-text">使用临时文件时的注意事项</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Linux%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6%E5%87%BD%E6%95%B0mkstemp"><span class="toc-number">2.0.4.2.</span> <span class="toc-text">Linux临时文件函数mkstemp()</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">3.</span> <span class="toc-text">三. 文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%9A%E7%BB%84%E6%88%90%E4%B8%8E%E5%8A%9F%E8%83%BD%E6%8F%8F%E8%BF%B0"><span class="toc-number">3.0.1.</span> <span class="toc-text">实际文件系统：组成与功能描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9FVFS"><span class="toc-number">3.0.2.</span> <span class="toc-text">虚拟文件系统VFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-proc"><span class="toc-number">3.0.3.</span> <span class="toc-text">特殊文件系统&#x2F;proc</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-%E8%AE%BE%E5%A4%87"><span class="toc-number">4.</span> <span class="toc-text">四. 设备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E7%B1%BB%E5%9E%8B"><span class="toc-number">4.0.1.</span> <span class="toc-text">设备类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="toc-number">4.0.1.1.</span> <span class="toc-text">设备文件的性质</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">4.0.2.</span> <span class="toc-text">设备文件的类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B4%E6%98%8E"><span class="toc-number">4.0.3.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E5%8F%B7"><span class="toc-number">4.0.4.</span> <span class="toc-text">设备号</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%A7%E8%AE%BE%E5%A4%87%E5%8F%B7%EF%BC%88major-device-number%EF%BC%89"><span class="toc-number">4.0.4.1.</span> <span class="toc-text">大设备号（major device number）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%8F%E8%AE%BE%E5%A4%87%E5%8F%B7%EF%BC%88-minor-device-number-%EF%BC%89"><span class="toc-number">4.0.4.2.</span> <span class="toc-text">小设备号（ minor device number ）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">4.0.4.3.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E9%A1%B9"><span class="toc-number">4.0.5.</span> <span class="toc-text">设备项</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E9%A1%B9%EF%BC%9A%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B1%BB%E4%BC%BC"><span class="toc-number">4.0.5.1.</span> <span class="toc-text">设备项：与文件类似</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mknod%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%EF%BC%9A%E5%88%9B%E5%BB%BA%E8%AE%BE%E5%A4%87%E9%A1%B9%EF%BC%88%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%BB%93%E7%82%B9%EF%BC%89"><span class="toc-number">4.0.5.2.</span> <span class="toc-text">mknod系统调用：创建设备项（文件系统结点）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E7%9B%AE%E5%BD%95"><span class="toc-number">4.0.6.</span> <span class="toc-text">设备目录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%B7%B2%E7%9F%A5%E7%9A%84%E8%AE%BE%E5%A4%87%E7%9B%AE%E5%BD%95%EF%BC%9A-dev"><span class="toc-number">4.0.6.1.</span> <span class="toc-text">操作系统已知的设备目录：&#x2F;dev</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-1"><span class="toc-number">4.0.6.2.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%BB%B6%E8%AE%BE%E5%A4%87"><span class="toc-number">4.0.7.</span> <span class="toc-text">硬件设备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E8%AE%BE%E5%A4%87"><span class="toc-number">4.0.8.</span> <span class="toc-text">特殊设备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#dev-null%EF%BC%9A%E5%93%91%E8%AE%BE%E5%A4%87"><span class="toc-number">4.0.8.1.</span> <span class="toc-text">&#x2F;dev&#x2F;null：哑设备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dev-zero%EF%BC%9A%E9%9B%B6%E8%AE%BE%E5%A4%87"><span class="toc-number">4.0.8.2.</span> <span class="toc-text">&#x2F;dev&#x2F;zero：零设备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dev-full%EF%BC%9A%E6%BB%A1%E8%AE%BE%E5%A4%87"><span class="toc-number">4.0.8.3.</span> <span class="toc-text">&#x2F;dev&#x2F;full：满设备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dev-random%E5%92%8C-dev-urandom%EF%BC%9A%E9%9A%8F%E6%9C%BA%E6%95%B0%E8%AE%BE%E5%A4%87"><span class="toc-number">4.0.8.4.</span> <span class="toc-text">&#x2F;dev&#x2F;random和&#x2F;dev&#x2F;urandom：随机数设备</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E6%8E%A7%E5%88%B6%E4%B8%8E%E8%AE%BF%E9%97%AE"><span class="toc-number">4.0.9.</span> <span class="toc-text">设备控制与访问</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E8%AE%BF%E9%97%AE"><span class="toc-number">4.0.9.1.</span> <span class="toc-text">设备访问</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E7%A1%AC%E4%BB%B6%E8%AE%BE%E5%A4%87%E7%9A%84%E5%87%BD%E6%95%B0%EF%BC%9Aioctl"><span class="toc-number">4.0.9.2.</span> <span class="toc-text">控制硬件设备的函数：ioctl()</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94-%E5%BA%93"><span class="toc-number">5.</span> <span class="toc-text">五. 库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%BA%93%EF%BC%88Archives%EF%BC%89"><span class="toc-number">5.0.1.</span> <span class="toc-text">静态库（Archives）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%BA%93%EF%BC%88Shared-Object%EF%BC%89"><span class="toc-number">5.0.2.</span> <span class="toc-text">动态库（Shared Object）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C%E6%A0%87%E5%87%86%E5%BA%93%EF%BC%9Alibc"><span class="toc-number">5.0.3.</span> <span class="toc-text">C标准库：libc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-%E6%A0%87%E5%87%86%E5%BA%93%EF%BC%9Alibstdc"><span class="toc-number">5.0.4.</span> <span class="toc-text">C++标准库：libstdc++</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%93%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7"><span class="toc-number">5.0.5.</span> <span class="toc-text">库的相关性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%BA%93%E8%A3%85%E8%BD%BD%E5%87%BD%E6%95%B0dlopen-%EF%BC%9A%E5%A4%B4%E6%96%87%E4%BB%B6%E2%80%9Cdlfcn-h%E2%80%9D"><span class="toc-number">5.0.6.</span> <span class="toc-text">动态库装载函数dlopen()：头文件“dlfcn.h”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E6%9F%A5%E6%89%BE%E4%B8%8E%E8%A3%85%E8%BD%BD%E5%87%BD%E6%95%B0dlsym"><span class="toc-number">5.0.7.</span> <span class="toc-text">函数查找与装载函数dlsym()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%BA%93%E5%8D%B8%E8%BD%BD%E5%87%BD%E6%95%B0dlclose"><span class="toc-number">5.0.8.</span> <span class="toc-text">动态库卸载函数dlclose()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%BA%93%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0dlerror"><span class="toc-number">5.0.9.</span> <span class="toc-text">动态库错误处理函数dlerror()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%8A%A8%E6%80%81%E5%BA%93%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%EF%BC%8C%E8%AE%BE%E5%87%BD%E6%95%B0%E5%90%8D%E4%B8%BAg"><span class="toc-number">5.0.10.</span> <span class="toc-text">调用动态库中的函数，设函数名为g</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD-makefile%E6%96%87%E4%BB%B6"><span class="toc-number">6.</span> <span class="toc-text">六. makefile文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#make%E5%91%BD%E4%BB%A4%EF%BC%9A%E8%B4%9F%E8%B4%A3C-C-%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E4%B8%8E%E9%93%BE%E6%8E%A5"><span class="toc-number">6.0.1.</span> <span class="toc-text">make命令：负责C&#x2F;C++程序编译与链接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#makefile%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.0.2.</span> <span class="toc-text">makefile文件格式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#makefile%E6%96%87%E4%BB%B6%E5%9F%BA%E6%9C%AC%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.0.2.1.</span> <span class="toc-text">makefile文件基本格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#makefile%E6%96%87%E4%BB%B6%E8%A7%84%E5%88%99"><span class="toc-number">6.0.2.2.</span> <span class="toc-text">makefile文件规则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#target%EF%BC%9A%E7%9B%AE%E6%A0%87"><span class="toc-number">6.0.2.3.</span> <span class="toc-text">target：目标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#prerequisites%EF%BC%9A%E5%85%88%E5%86%B3%E6%9D%A1%E4%BB%B6"><span class="toc-number">6.0.2.4.</span> <span class="toc-text">prerequisites：先决条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#commands%EF%BC%9A%E5%91%BD%E4%BB%A4"><span class="toc-number">6.0.2.5.</span> <span class="toc-text">commands：命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%AA%E7%9B%AE%E6%A0%87%EF%BC%9A%E6%93%8D%E4%BD%9C%E5%90%8D%E7%A7%B0%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E6%96%87%E4%BB%B6%E5%90%8D"><span class="toc-number">6.0.2.6.</span> <span class="toc-text">伪目标：操作名称，而不是文件名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%AA%E7%9B%AE%E6%A0%87%E6%83%AF%E4%BE%8B"><span class="toc-number">6.0.2.7.</span> <span class="toc-text">伪目标惯例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A%E5%81%87%E8%AE%BE%E7%A8%8B%E5%BA%8F%E4%B8%BB%E6%96%87%E4%BB%B6%E2%80%9Cmain-c%E2%80%9D%EF%BC%8C%E4%BD%BF%E7%94%A8library%E5%BA%93"><span class="toc-number">6.0.2.8.</span> <span class="toc-text">示例：假设程序主文件“main.c”，使用library库</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#makefile%E8%AF%AD%E6%B3%95"><span class="toc-number">6.0.3.</span> <span class="toc-text">makefile语法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%8C%E8%A7%A3%E6%9E%90%EF%BC%9A%E5%91%BD%E4%BB%A4%E6%8C%89%E8%A1%8C%E8%A7%A3%E6%9E%90"><span class="toc-number">6.0.3.1.</span> <span class="toc-text">行解析：命令按行解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%A2%E8%A1%8C%EF%BC%9A%E5%91%BD%E4%BB%A4%E5%A4%AA%E9%95%BF%E6%97%B6%EF%BC%8C%E8%A1%8C%E5%B0%BE%E7%94%A8%E2%80%9C-%E2%80%9D%E6%8D%A2%E8%A1%8C"><span class="toc-number">6.0.3.2.</span> <span class="toc-text">换行：命令太长时，行尾用“\”换行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E9%87%8A%EF%BC%9A%E8%A1%8C%E9%A6%96%E5%AD%97%E7%AC%A6%E4%B8%BA%E2%80%9C-%E2%80%9D%E7%9A%84%E6%96%87%E6%9C%AC%E8%A1%8C"><span class="toc-number">6.0.3.3.</span> <span class="toc-text">注释：行首字符为“#”的文本行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E5%9B%9E%E6%98%BE%EF%BC%9A%E5%9C%A8%E8%A1%8C%E9%A6%96%E5%AD%97%E7%AC%A6%E5%90%8E%E5%92%8C%E5%91%BD%E4%BB%A4%E5%89%8D%E6%B7%BB%E5%8A%A0%E2%80%9C-%E2%80%9D"><span class="toc-number">6.0.3.4.</span> <span class="toc-text">关闭回显：在行首字符后和命令前添加“@”</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#include-filename%EF%BC%9A%E5%8C%85%E5%90%AB%E5%85%B6%E4%BB%96%E6%96%87%E4%BB%B6"><span class="toc-number">6.0.3.5.</span> <span class="toc-text">include filename：包含其他文件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6"><span class="toc-number">6.0.4.</span> <span class="toc-text">通配符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%98%E9%87%8F"><span class="toc-number">6.0.5.</span> <span class="toc-text">变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E7%BD%AE%E5%8F%98%E9%87%8F"><span class="toc-number">6.0.6.</span> <span class="toc-text">内置变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%8F%98%E9%87%8F"><span class="toc-number">6.0.7.</span> <span class="toc-text">自动变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-2"><span class="toc-number">6.0.8.</span> <span class="toc-text">示例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E5%AE%9A%E4%B9%89%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.0.8.1.</span> <span class="toc-text">变量定义格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E8%A1%8C%E5%8F%98%E9%87%8F"><span class="toc-number">6.0.8.2.</span> <span class="toc-text">多行变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87%E5%8F%98%E9%87%8F%EF%BC%9A%E7%B1%BB%E4%BC%BC%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%EF%BC%8C%E4%BB%85%E5%AF%B9%E6%9C%AC%E7%9B%AE%E6%A0%87%E8%A7%84%E5%88%99%E9%93%BE%E6%9C%89%E6%95%88"><span class="toc-number">6.0.8.3.</span> <span class="toc-text">目标变量：类似局部变量，仅对本目标规则链有效</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E6%A8%A1%E5%BC%8F%EF%BC%9A%E4%BB%A5%E2%80%9C-%E2%80%9D%E9%80%9A%E9%85%8D"><span class="toc-number">6.0.8.4.</span> <span class="toc-text">静态模式：以“%”通配</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%EF%BC%9A%E5%8F%AF%E4%BB%A5%E5%9C%A8makefile%E4%B8%AD%E4%BD%BF%E7%94%A8shell%E5%BE%AA%E7%8E%AF"><span class="toc-number">6.0.8.5.</span> <span class="toc-text">循环：可以在makefile中使用shell循环</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%EF%BC%9A%E5%83%8F%E5%8F%98%E9%87%8F%E4%B8%80%E6%A0%B7%E4%BD%BF%E7%94%A8%E2%80%9C-%E2%80%9D%E6%A0%87%E8%AF%86"><span class="toc-number">6.0.8.6.</span> <span class="toc-text">函数：像变量一样使用“$()”标识</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://lisuqing2020.github.io/2020/02/17/C++/linux%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="李素晴"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Lisuqing's Personal Website"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Linux系统编程基础</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-02-17 00:09:49" itemprop="dateCreated datePublished" datetime="2020-02-17T00:09:49+08:00">2020-02-17</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2020-11-22 13:30:19" itemprop="dateModified" datetime="2020-11-22T13:30:19+08:00">2020-11-22</time></div><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Views"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-category"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span> <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category" href="/categories/C/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">C++</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag" href="/tags/thuC/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">thuC++</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><a id="more"></a>
+
+<h1 id="一-程序执行环境"><a href="#一-程序执行环境" class="headerlink" title="一. 程序执行环境"></a>一. 程序执行环境</h1><ol>
+<li><h3 id="参数列表"><a href="#参数列表" class="headerlink" title="参数列表"></a>参数列表</h3><ol>
+<li><h4 id="linux命令行规范"><a href="#linux命令行规范" class="headerlink" title="linux命令行规范"></a>linux命令行规范</h4><ul>
+<li>短参数：以单横开头，后跟单一字符，例如ls -h</li>
+<li>长参数：以双横开头，后跟字符串，例如ls –help</li>
+</ul>
+</li>
+<li><h4 id="程序访问参数列表的方法"><a href="#程序访问参数列表的方法" class="headerlink" title="程序访问参数列表的方法"></a>程序访问参数列表的方法</h4><ul>
+<li><p>主函数的参数argc和argv</p>
+</li>
+<li><p>程序接受命令行的输入参数，并解释之</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;The program name is &quot;</span> &lt;&lt; argv[<span class="number">0</span>] &lt;&lt; <span class="string">&quot;.&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">if</span>(argc &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;With &quot;</span> &lt;&lt; argc - <span class="number">1</span> &lt;&lt; <span class="string">&quot; args as follows:&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; argc; i++) &#123;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; argv[i] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;No args.&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./a.out -h --<span class="built_in">help</span></span></span><br><span class="line">The program name is ./a.out.</span><br><span class="line">With 2 args as follows:</span><br><span class="line">-h</span><br><span class="line">--help</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><h4 id="选项数组的定义"><a href="#选项数组的定义" class="headerlink" title="选项数组的定义"></a>选项数组的定义</h4><ul>
+<li>结构体类型option：系统已定义，直接使用即可<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 头文件：&quot;getopt.h&quot;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">option</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* name; <span class="comment">// 选项长名称</span></span><br><span class="line">    <span class="keyword">int</span> has_arg;    <span class="comment">// 该参数是否具有附加参数;0无，1有，2可选</span></span><br><span class="line">    <span class="keyword">int</span>* flag; <span class="comment">// 指向整数，用于保存val值，设为0</span></span><br><span class="line">    <span class="keyword">int</span> val;    <span class="comment">// 选项短名称</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><h4 id="函数getopt-long"><a href="#函数getopt-long" class="headerlink" title="函数getopt_long()"></a>函数getopt_long()</h4><ul>
+<li>函数原型：<code>int getopt_long(int argc,char* const* argv,const char* short_options,const struct option* long_options,int* long_index);</code></li>
+<li>函数返回值为参数短名称，不存在时返回-1</li>
+<li>如果为长选项，第五个参数输出该选项在长选项数组中的索引</li>
+</ul>
+</li>
+<li><h4 id="参数处理方法"><a href="#参数处理方法" class="headerlink" title="参数处理方法"></a>参数处理方法</h4><ul>
+<li>使用循环处理所有参数</li>
+<li>如果遇到错误选项，输出错误消息并终止程序执行</li>
+<li>处理附加参数时，用全局变量optarg传递其地址</li>
+<li>完成所有处理后，全局变量optind为首个非可选参数的索引</li>
+</ul>
+</li>
+<li><h4 id="编写程序，接受如下三个选项并执行正确操作"><a href="#编写程序，接受如下三个选项并执行正确操作" class="headerlink" title="编写程序，接受如下三个选项并执行正确操作"></a>编写程序，接受如下三个选项并执行正确操作</h4><ul>
+<li>-h/–help:显示程序用法并退出</li>
+<li>-o filename/–output filename:指定文件名</li>
+<li>-v/–verbose:输出复杂信息<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;getopt.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* program_name;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OutputInfo</span><span class="params">(ostream &amp;os, <span class="keyword">int</span> exit_code)</span> </span>&#123;</span><br><span class="line">    os &lt;&lt; <span class="string">&quot;Usage:&quot;</span> &lt;&lt; program_name &lt;&lt; <span class="string">&quot; options [filename]&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    os &lt;&lt; <span class="string">&quot;-h --help: Display this usage information.&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    os &lt;&lt; <span class="string">&quot;-o --output filename: Write output to file.&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    os &lt;&lt; <span class="string">&quot;-v --verbose: Print verbose messages.&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">exit</span>(exit_code);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 全部短选项的合并字符串，&quot;:&quot;表示带有附加参数</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span> short_opts = <span class="string">&quot;ho:v&quot;</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">option</span> <span class="title">long_opts</span>[] =</span> &#123;</span><br><span class="line">        &#123;<span class="string">&quot;help&quot;</span>,<span class="number">0</span>,<span class="literal">NULL</span>,<span class="string">&#x27;h&#x27;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;output&quot;</span>,<span class="number">1</span>,<span class="literal">NULL</span>,<span class="string">&#x27;o&#x27;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;verbose&quot;</span>,<span class="number">0</span>,<span class="literal">NULL</span>,<span class="string">&#x27;v&#x27;</span>&#125;,</span><br><span class="line">        &#123;<span class="literal">NULL</span>,<span class="number">0</span>,<span class="literal">NULL</span>,<span class="number">0</span>&#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 参数指定的输出文件名</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* output_filename = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 是否显示复杂信息</span></span><br><span class="line">    <span class="keyword">int</span> verbose = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 保存程序名</span></span><br><span class="line">    program_name = argv[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果为长选项，第五个参数输出该选项在长选项数组中的索引</span></span><br><span class="line">    <span class="keyword">int</span> opt = getopt_long(argc,argv,short_opts,long_opts,<span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(opt != <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span>(opt) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;h&#x27;</span>:	<span class="comment">// -h 或 --help</span></span><br><span class="line">                OutputInfo(<span class="built_in">cout</span>,<span class="number">0</span>);</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;o&#x27;</span>: 	<span class="comment">// 附加参数由optarg提供</span></span><br><span class="line">                output_filename = optarg;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;v&#x27;</span>:</span><br><span class="line">                verbose = <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;?&#x27;</span>:	<span class="comment">// 用户输入了无效参数</span></span><br><span class="line">                OutputInfo(<span class="built_in">cerr</span>,<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">case</span> <span class="number">-1</span>:	<span class="comment">// 处理完毕</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="built_in">abort</span>();	<span class="comment">// 终止程序，任何对象的析构函数都不会被调用</span></span><br><span class="line">        &#125;</span><br><span class="line">        opt= getopt_long(argc,argv,short_opts,long_opts,<span class="literal">NULL</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><ol>
+<li><h4 id="典型Linux环境变量"><a href="#典型Linux环境变量" class="headerlink" title="典型Linux环境变量"></a>典型Linux环境变量</h4><ul>
+<li>USER：你的用户名</li>
+<li>HOME：你的主目录</li>
+<li>PATH：分号分割的Linux查找命令的目录列表</li>
+</ul>
+</li>
+<li><h4 id="shell处理"><a href="#shell处理" class="headerlink" title="shell处理"></a>shell处理</h4><ul>
+<li>shell编程时查看环境变量：echo $USER</li>
+<li>设置新的环境变量：<code>EDITOR=emacs;export EDITOR</code>或<code>export EDITOR=emacs</code></li>
+</ul>
+</li>
+<li><h4 id="环境变量内部定义格式：VARIABLE-value"><a href="#环境变量内部定义格式：VARIABLE-value" class="headerlink" title="环境变量内部定义格式：VARIABLE=value"></a>环境变量内部定义格式：VARIABLE=value</h4></li>
+<li><h4 id="使用getenv-函数返回环境变量的值"><a href="#使用getenv-函数返回环境变量的值" class="headerlink" title="使用getenv()函数返回环境变量的值"></a>使用getenv()函数返回环境变量的值</h4></li>
+<li><h4 id="使用全局变量environ处理环境变量"><a href="#使用全局变量environ处理环境变量" class="headerlink" title="使用全局变量environ处理环境变量"></a>使用全局变量environ处理环境变量</h4> <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">char</span>** environ;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> ** var;</span><br><span class="line">    <span class="keyword">for</span>(var = environ; *var != <span class="literal">NULL</span>; var++) &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; *var &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;	<span class="comment">// 列出了本机所有环境变量</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><h4 id="编写客户端程序，在用户未指定服务器名时使用缺省服务器名称"><a href="#编写客户端程序，在用户未指定服务器名时使用缺省服务器名称" class="headerlink" title="编写客户端程序，在用户未指定服务器名时使用缺省服务器名称"></a>编写客户端程序，在用户未指定服务器名时使用缺省服务器名称</h4> <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> * server_name = getenv(<span class="string">&quot;SERVER_NAME&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(!server_name) &#123;</span><br><span class="line">        <span class="comment">// SERVER_NAME环境变量未设置，使用缺省值</span></span><br><span class="line">        server_name = (<span class="keyword">char</span>*)<span class="string">&quot;server.yours.com&quot;</span>;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;acessing server&quot;</span> &lt;&lt; server_name &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><h3 id="程序退出码"><a href="#程序退出码" class="headerlink" title="程序退出码"></a>程序退出码</h3><ol>
+<li><h4 id="程序：结束时传递给操作系统的整型数据"><a href="#程序：结束时传递给操作系统的整型数据" class="headerlink" title="程序：结束时传递给操作系统的整型数据"></a>程序：结束时传递给操作系统的整型数据</h4><ul>
+<li>实际上是main()函数的返回值</li>
+<li>其它函数也可以调用exit()函数返回特定退出码</li>
+<li>退出码的变量名称经常为exit_code</li>
+<li>应仔细设计程序退出码，确保它们能够区分不同错误</li>
+</ul>
+</li>
+<li><h4 id="操作系统：响应程序退出码，如果必要，执行后续处理"><a href="#操作系统：响应程序退出码，如果必要，执行后续处理" class="headerlink" title="操作系统：响应程序退出码，如果必要，执行后续处理"></a>操作系统：响应程序退出码，如果必要，执行后续处理</h4><ul>
+<li>shell编程时查看上一次退出码的命令：echo $?</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="系统调用错误处理"><a href="#系统调用错误处理" class="headerlink" title="系统调用错误处理"></a>系统调用错误处理</h3><ol>
+<li><h4 id="实现逻辑"><a href="#实现逻辑" class="headerlink" title="实现逻辑"></a>实现逻辑</h4><ul>
+<li>C程序使用断言，C++程序使用断言或异常处理机制</li>
+</ul>
+</li>
+<li><h4 id="两个主要问题"><a href="#两个主要问题" class="headerlink" title="两个主要问题"></a>两个主要问题</h4><ul>
+<li>系统调用：访问系统资源的手段</li>
+<li>系统调用失败的原因：资源不足；因权限不足而被阻塞；调用参数无效，如无效内存地址或文件描述符；被外部事件中断；不可预计的外部原因</li>
+<li>资源管理：已分配资源必须在任何情况下都能正确释放</li>
+</ul>
+</li>
+<li><h4 id="Linux使用整数表示系统调用错误"><a href="#Linux使用整数表示系统调用错误" class="headerlink" title="Linux使用整数表示系统调用错误"></a>Linux使用整数表示系统调用错误</h4><ul>
+<li>标准错误码为以”E”开头的全大写宏</li>
+<li>宏errno（使用方法类似全局变量）：表示错误码，位于头文件”errno.h”中</li>
+<li>每次错误都重写该值，处理错误时必须保留其副本</li>
+<li>函数strerror()：返回宏errno对应的错误说明字符串，位于头文件”string.h”中<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将指定文件的拥有者改为指定的用户或组</span></span><br><span class="line"><span class="comment">// 第一个参数为文件名，第二第三个参数分别为用户和组id，-1表示不改变</span></span><br><span class="line">rval = chown(path,user_id,<span class="number">-1</span>)；</span><br><span class="line"><span class="keyword">if</span>(rval) &#123;</span><br><span class="line">    <span class="comment">// 必须存储errno，因为下一次系统调用会修改该值</span></span><br><span class="line">    <span class="keyword">int</span> error_code = errno;</span><br><span class="line">    <span class="comment">// 操作不成功，chown将返回-1</span></span><br><span class="line">    assert(rval == <span class="number">-1</span>);</span><br><span class="line">    <span class="comment">// 检查errno，对应进行处理</span></span><br><span class="line">    <span class="keyword">switch</span>(error_code) &#123;</span><br><span class="line">        <span class="keyword">case</span> EPERM:	<span class="comment">// 操作被否决</span></span><br><span class="line">        <span class="keyword">case</span> EROFS: <span class="comment">// PATH位于只读文件系统中</span></span><br><span class="line">        <span class="keyword">case</span> ENAMETOOLONG:	<span class="comment">// 文件名太长</span></span><br><span class="line">        <span class="keyword">case</span> ENOENT:	<span class="comment">// 文件不存在</span></span><br><span class="line">        <span class="keyword">case</span> ENOTDIR:	<span class="comment">// path的某个成分不是目录</span></span><br><span class="line">        <span class="keyword">case</span> EACCES:	<span class="comment">// path的某个成分不可访问</span></span><br><span class="line">            <span class="built_in">cerr</span> &lt;&lt; <span class="string">&quot;error when trying to change the ownership of &quot;</span> &lt;&lt; path;</span><br><span class="line">            <span class="built_in">cerr</span> &lt;&lt; <span class="string">&quot;:&quot;</span> &lt;&lt; strerror(error_code) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">case</span> EFAULT:	<span class="comment">// path包含无效内存地址，有可能为bug</span></span><br><span class="line">            <span class="built_in">abort</span>();</span><br><span class="line">        <span class="keyword">case</span> ENOMEN:	<span class="comment">// 核心内存不足</span></span><br><span class="line">            <span class="built_in">cerr</span> &lt;&lt; strerror(error_code) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">default</span>:	<span class="comment">// 不可预见错误，最可能为程序bug</span></span><br><span class="line">            <span class="built_in">abort</span>();</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="资源管理"><a href="#资源管理" class="headerlink" title="资源管理"></a>资源管理</h3><ol>
+<li><h4 id="必须予以明确管理的资源类型"><a href="#必须予以明确管理的资源类型" class="headerlink" title="必须予以明确管理的资源类型"></a>必须予以明确管理的资源类型</h4><ul>
+<li>内存、文件描述符、文件指针、临时文件、同步对象等</li>
+</ul>
+</li>
+<li><h4 id="资源管理流程"><a href="#资源管理流程" class="headerlink" title="资源管理流程"></a>资源管理流程</h4><ul>
+<li>步骤1：分配资源</li>
+<li>步骤2：正常处理流程</li>
+<li>步骤3：如果流程失败，释放资源并退出，否则执行正常处理流程</li>
+<li>步骤4：释放资源</li>
+<li>步骤5：函数返回<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">ReadFromFile</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">size_t</span> length)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>* buffer = <span class="keyword">new</span> <span class="keyword">char</span>[length];</span><br><span class="line">    <span class="keyword">if</span>(!buffer) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> fd = open(filename,O_RDONLY);	<span class="comment">// 以只读模式打开文件</span></span><br><span class="line">    <span class="keyword">if</span>(fd == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">delete</span>[] buffer;</span><br><span class="line">        buffer = <span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">size_t</span> bytes_read = read(fd,buffer,length);</span><br><span class="line">    <span class="keyword">if</span>(bytes_read != length) &#123;</span><br><span class="line">        <span class="keyword">delete</span>[] buffer;</span><br><span class="line">        buffer = <span class="literal">NULL</span>;</span><br><span class="line">        close(fd);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">return</span> buffer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="系统日志"><a href="#系统日志" class="headerlink" title="系统日志"></a>系统日志</h3><ol>
+<li><h4 id="日志：系统或程序运行的记录"><a href="#日志：系统或程序运行的记录" class="headerlink" title="日志：系统或程序运行的记录"></a>日志：系统或程序运行的记录</h4></li>
+<li><h4 id="系统日志进程：syslogd-rsyslogd"><a href="#系统日志进程：syslogd-rsyslogd" class="headerlink" title="系统日志进程：syslogd/rsyslogd"></a>系统日志进程：syslogd/rsyslogd</h4><ul>
+<li>两者均为守护进程，即在后台运行的进程，没有控制终端，也不会接收用户输入，父进程通常为init进程</li>
+<li>日志文件一般为”dev/log”，日志信息一般保存在”var/log”目录下</li>
+<li>rsyslogd既能接收用户进程输出的日志，也能接收内核日志；在接收到日志信息后，会输出到特定的日志文件中；日志信息的分发可配置</li>
+</ul>
+</li>
+<li><h4 id="日志生成函数：syslog"><a href="#日志生成函数：syslog" class="headerlink" title="日志生成函数：syslog()"></a>日志生成函数：syslog()</h4><ul>
+<li>头文件：”syslog.h”</li>
+<li>原型：<code>void syslog(int priority,const char* msg,...);</code></li>
+<li>可变参数列表，用于结构化输出</li>
+<li>priority：日志优先级，设施值（一般默认为LOG_USER）与日志级别的位或</li>
+<li>日志级别：LOG_EMERG(0,系统不可用)、LOG_ALERT(1,报警，需立即采取行动)、LOG_GRIT(2,严重情况)、LOG_ERR(3,错误)、LOG_WARNING(4,警告)、LOG_NOTICE(5,通知)、LOG_INFO(6,信息)、LOG_DEBUG(7,调试)</li>
+</ul>
+</li>
+<li><h4 id="日志打开函数：openlog"><a href="#日志打开函数：openlog" class="headerlink" title="日志打开函数：openlog()"></a>日志打开函数：openlog()</h4><ul>
+<li>原型：<code>void openlog(const char * ident, int logopt, int facility);</code></li>
+<li>改变syslog()函数的默认输出方式，以进一步结构化日志内容</li>
+<li>ident：标志项，指定添加到日志消息的日期和时间后的字符串</li>
+<li>logopt：日志选项，用于配置syslog()函数的行为，取值为LOG_PID（在日志消息中包含程序PID）、LOG_CONS（如果日志不能记录至日志文件，则打印到终端）、LOG_ODELAY（延迟打开日志功能，直到第一次调用syslog()函数）、LOG_NDELAY（不延迟打开日志功能）的位或</li>
+<li>facility：用于修改syslog()函数的默认设施值，一般维持LOG_USER不变</li>
+</ul>
+</li>
+<li><h4 id="日志过滤函数：setlogmask"><a href="#日志过滤函数：setlogmask" class="headerlink" title="日志过滤函数：setlogmask()"></a>日志过滤函数：setlogmask()</h4><ul>
+<li>原型：<code>int setlogmask(int maskpri);</code></li>
+<li>设置日志掩码，大于maskpri的日志级别信息被过滤</li>
+<li>返回值：设置日志掩码前的日志掩码旧值</li>
+</ul>
+</li>
+<li><h4 id="日志关闭函数：closelog"><a href="#日志关闭函数：closelog" class="headerlink" title="日志关闭函数：closelog()"></a>日志关闭函数：closelog()</h4><ul>
+<li>原型：<code>void closelog();</code></li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h3><ol>
+<li><h4 id="UID、EUID、GID和EGID"><a href="#UID、EUID、GID和EGID" class="headerlink" title="UID、EUID、GID和EGID"></a>UID、EUID、GID和EGID</h4><ul>
+<li>每个进程拥有两个用户ID：UID（真实用户ID）和EUID（有效用户ID）</li>
+<li>EUID的目的：方便资源访问，运行程序的用户拥有该程序有效用户的权限</li>
+<li>组与用户类似</li>
+</ul>
+</li>
+<li><h4 id="用户信息处理函数"><a href="#用户信息处理函数" class="headerlink" title="用户信息处理函数"></a>用户信息处理函数</h4><ul>
+<li>获取真实用户ID：uid_t getuid();</li>
+<li>获取有效用户ID：uid_t geteuid();</li>
+<li>获取真实组ID：gid_t getgid();</li>
+<li>获取有效组ID：gid_t getegid();</li>
+<li>设置真实用户ID：int setuid(uid_t uid);</li>
+<li>设置有效用户ID：int seteuid(uid_t uid);</li>
+<li>设置真实组ID：int setgid(gid_t gid);</li>
+<li>设置有效组ID：int setegid(gid_t gid);<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="keyword">uid_t</span> uid = getuid(),  euid = geteuid();</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;uid: %d; euid: %d\n&quot;</span>, uid, euid );	<span class="comment">// 1000 1000</span></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="二-输入输出"><a href="#二-输入输出" class="headerlink" title="二. 输入输出"></a>二. 输入输出</h1><ol>
+<li><h3 id="标准输入输出流"><a href="#标准输入输出流" class="headerlink" title="标准输入输出流"></a>标准输入输出流</h3><ol>
+<li><h4 id="标准输入流：stdin-cin"><a href="#标准输入流：stdin-cin" class="headerlink" title="标准输入流：stdin/cin"></a>标准输入流：stdin/cin</h4></li>
+<li><h4 id="标准输出流：stdout-cout"><a href="#标准输出流：stdout-cout" class="headerlink" title="标准输出流：stdout/cout"></a>标准输出流：stdout/cout</h4><ul>
+<li>数据有缓冲，在缓冲区满、程序正常退出、流被关闭或强制刷新（fflush()函数）时输出</li>
+<li>等到缓冲区满后同时打印多个句号：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(i++) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span>(i == <span class="number">10</span>) &#123;</span><br><span class="line">            fflush(<span class="built_in">stdout</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h4 id="标准错误流：stderr-cerr"><a href="#标准错误流：stderr-cerr" class="headerlink" title="标准错误流：stderr/cerr"></a>标准错误流：stderr/cerr</h4><ul>
+<li>数据无缓冲，直接输出</li>
+<li>每秒打印一个句号：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(i++) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">&quot;.&quot;</span>);</span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h3><ol>
+<li><h4 id="文件描述符的意义与目的：在程序中代表文件"><a href="#文件描述符的意义与目的：在程序中代表文件" class="headerlink" title="文件描述符的意义与目的：在程序中代表文件"></a>文件描述符的意义与目的：在程序中代表文件</h4><ul>
+<li>内核为每个进程维护一个文件打开记录表，文件描述符为该文件在表中的索引值</li>
+</ul>
+</li>
+<li><h4 id="文件描述符为非负整数，范围从0至OPEN-MAX"><a href="#文件描述符为非负整数，范围从0至OPEN-MAX" class="headerlink" title="文件描述符为非负整数，范围从0至OPEN_MAX"></a>文件描述符为非负整数，范围从0至OPEN_MAX</h4><ul>
+<li>不同操作系统可能具有不同范围，可以同时打开的文件数目不同</li>
+</ul>
+</li>
+<li><h4 id="文件描述符的缺点"><a href="#文件描述符的缺点" class="headerlink" title="文件描述符的缺点"></a>文件描述符的缺点</h4><ul>
+<li>非UNIX/Linux操作系统可能没有文件描述符概念，跨平台编程时建议使用C/C++标准库函数和文件流类</li>
+</ul>
+</li>
+<li><h4 id="预定义的标准输入输出流的文件描述符"><a href="#预定义的标准输入输出流的文件描述符" class="headerlink" title="预定义的标准输入输出流的文件描述符"></a>预定义的标准输入输出流的文件描述符</h4><ul>
+<li>标准输入流stdin：STDIN_FILENO（0）</li>
+<li>标准输出流stdout：STDOUT_FILENO（1）</li>
+<li>标准错误流stderr：STDERR_FILENO（2）</li>
+</ul>
+</li>
+<li><h4 id="文件描述符的创建"><a href="#文件描述符的创建" class="headerlink" title="文件描述符的创建"></a>文件描述符的创建</h4><ul>
+<li>Linux中凡物皆文件，操作系统使用统一方式管理和维护</li>
+<li>很多函数都可通过打开文件或设备的方式创建文件描述符</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="I-O函数"><a href="#I-O函数" class="headerlink" title="I/O函数"></a>I/O函数</h3><ol>
+<li><h4 id="基本与高级I-O函数"><a href="#基本与高级I-O函数" class="headerlink" title="基本与高级I/O函数"></a>基本与高级I/O函数</h4><ul>
+<li>打开关闭函数open()和close()：前者头文件“fcntl.h”，后者头文件“unistd.h”</li>
+<li>读写函数read()和write()：头文件“unistd.h”</li>
+<li>读写函数readv()和writev()：头文件“sys/uio.h”</li>
+<li>文件发送函数sendfile()：头文件“sys/sendfile.h”</li>
+<li>数据移动函数splice()：头文件“fcntl.h”</li>
+<li>数据移动函数tee()：头文件“fcntl.h”</li>
+<li>文件控制函数fcntl()：头文件“fcntl.h”</li>
+</ul>
+</li>
+<li><h4 id="打开文件函数open"><a href="#打开文件函数open" class="headerlink" title="打开文件函数open()"></a>打开文件函数open()</h4><ul>
+<li>原型：<code>int open(const char * filename, int oflag, …);</code></li>
+<li>目的：打开filename指定的文件，返回其文件描述符，oflag为文件打开标志</li>
+<li>若文件支持定位，读取时从当前文件偏移量处开始</li>
+<li>文件打开标志：O_RDONLY（只读）、 O_WRONLY（只写）、 O_RDWR（读写）等</li>
+</ul>
+</li>
+<li><h4 id="关闭文件函数close"><a href="#关闭文件函数close" class="headerlink" title="关闭文件函数close()"></a>关闭文件函数close()</h4><ul>
+<li>原型：<code>int close(int fd);</code></li>
+<li>目的：关闭文件描述符fd所代表的文件</li>
+</ul>
+</li>
+<li><h4 id="读函数read"><a href="#读函数read" class="headerlink" title="读函数read()"></a>读函数read()</h4><ul>
+<li>原型：<code>ssize_t read(int fd, void * buf, size_t count);</code></li>
+<li>目的：将count个字节的数据从文件描述符fd所代表的文件中读入buf所指向的缓冲区</li>
+<li>若文件支持定位，读取时从当前文件偏移量处开始</li>
+<li>返回值：读取的字节数，0表示文件结尾，失败时返回-1并设置errno</li>
+</ul>
+</li>
+<li><h4 id="写函数write"><a href="#写函数write" class="headerlink" title="写函数write()"></a>写函数write()</h4><ul>
+<li>原型：<code>ssize_t write(int fd, const void * buf, size_t count);</code></li>
+<li>目的：将count个字节的数据从buf所指向的缓冲区写入文件描述符fd所代表的文件中</li>
+<li>参数与返回值的意义与read()相同或类似</li>
+</ul>
+</li>
+<li><h4 id="分散读函数readv"><a href="#分散读函数readv" class="headerlink" title="分散读函数readv()"></a>分散读函数readv()</h4><ul>
+<li>原型：<code>ssize_t readv(int fd, const struct iovec * iov, int iovcnt);</code></li>
+<li>目的：将数据从文件描述符所代表的文件中读到分散的内存块中</li>
+<li>参数：fd为文件描述符；iov为写入的内存块结构体数组，每个数组元素只有内存基地址iov_base和内存块长度iov_len两个字段；iovcnt为读取的元素个数</li>
+<li>返回值：读取的内存块数，失败时返回-1并设置errno</li>
+</ul>
+</li>
+<li><h4 id="集中写函数writev"><a href="#集中写函数writev" class="headerlink" title="集中写函数writev()"></a>集中写函数writev()</h4><ul>
+<li>原型：<code>ssize_t writev(int fd, const struct iovec * iov, int iovcnt);</code></li>
+<li>目的：将数据从分散的内存块中写入文件描述符所代表的文件中</li>
+<li>参数与返回值的意义与readv()相同或类似</li>
+</ul>
+</li>
+<li><h4 id="文件发送函数sendfile"><a href="#文件发送函数sendfile" class="headerlink" title="文件发送函数sendfile()"></a>文件发送函数sendfile()</h4><ul>
+<li>原型：<code>ssize_t sendfile(int out_fd, int in_fd, off_t * offset, int count);</code></li>
+<li>目的：在两个文件描述符所代表的文件间直接传递数据，以避免内核缓冲区和用户缓冲区之间的数据拷贝，提升程序效率；为网络文件传输而专门设计的函数</li>
+<li>参数：out_fd为目的文件描述符；in_fd为源文件描述符；offset指定读取时的偏移量，为NULL表示从默认位置开始读取；count为传输的字节数</li>
+<li>返回值：传输的字节数，失败时返回-1并设置errno</li>
+<li>注意事项：in_fd必须为支持类似mmap()函数的文件描述符，即必须代表真实的文件，不能为套接字和管道；out_fd必须为套接字</li>
+</ul>
+</li>
+<li><h4 id="数据移动函数splice"><a href="#数据移动函数splice" class="headerlink" title="数据移动函数splice()"></a>数据移动函数splice()</h4><ul>
+<li>原型：<code>ssize_t splice(int fd_in, loff_t * off_in, int fd_out, loff_t * off_out, ssize_t len, unsigned int flags);</code></li>
+<li>目的：在两个文件描述符所代表的文件间移动数据</li>
+<li>参数：fd_in为源文件描述符；off_in为输入数据偏移量，若fd_in为管道，则off_in必须设置为NULL；fd_out与off_out的意义类似；len为传输的字节数；flags控制数据如何移动，其取值为SPLICE_F_MOVE（新内核无效果）、SPLICE_F_NONBLOCK（非阻塞）、SPLICE_F_MORE（还有后续数据）和SPLICE_F_GIFT（无效果）的位或</li>
+<li>返回值：传输的字节数，0表示无数据移动，失败时返回-1并设置errno</li>
+<li>注意事项：fd_in和fd_out必须至少有一个为管道文件描述符</li>
+</ul>
+</li>
+<li><h4 id="数据移动函数tee"><a href="#数据移动函数tee" class="headerlink" title="数据移动函数tee()"></a>数据移动函数tee()</h4><ul>
+<li>原型：<code>ssize_t tee(int fd_in, int fd_out, ssize_t len, unsigned int flags);</code></li>
+<li>目的：在两个文件描述符所代表的管道间移动数据</li>
+<li>参数：含义与splice()相同</li>
+<li>返回值：传输的字节数，0表示无数据移动，失败时返回-1并设置errno</li>
+<li>注意事项：fd_in和fd_out必须为管道文件描述符</li>
+</ul>
+</li>
+<li><h4 id="文件控制函数fcntl"><a href="#文件控制函数fcntl" class="headerlink" title="文件控制函数fcntl()"></a>文件控制函数fcntl()</h4><ul>
+<li>原型：<code>int fcntl(int fd, int cmd, …);</code></li>
+<li>目的：对文件描述符所代表的文件或设备进行控制操作</li>
+<li>参数： fd为文件描述符；cmd为控制命令</li>
+<li>返回值：失败时返回-1并设置errno</li>
+<li>常用操作（cmd）<ul>
+<li>复制文件描述符：F_DUPFD/F_DUPFD_CLOEXEC，第三个参数型式long，成功时返回新创建的文件描述符</li>
+<li>获取或设置文件描述符的标志：F_GETFD/F_SETFD，第三个参数前者无，后者型式long，成功时前者返回fd的标志，后者0</li>
+<li>获取或设置文件描述符状态标志：F_GETFL/F_SETFL，第三个参数前者无，后者型式long，成功时前者返回fd的状态标志，后者0</li>
+<li>获取或设置SIGIO和SIGURG信号的宿主进程PID或进程组的GID： F_GETOWN/F_SETOWN，第三个参数前者无，后者型式long，成功时前者返回信号的宿主进程的PID或进程组的GID，后者0</li>
+<li>获取或设置信号：F_GETSIG/F_SETSIG，第三个参数前者无，后者型式long，成功时前者返回信号值，0表示SIGIO，后者0</li>
+<li>获取或设置管道容量：F_GETPIPE_SZ/F_SETPIPE_SZ，第三个参数前者无，后者型式long，成功时前者返回管道容量，后者0</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="临时文件"><a href="#临时文件" class="headerlink" title="临时文件"></a>临时文件</h3><ol>
+<li><h4 id="使用临时文件时的注意事项"><a href="#使用临时文件时的注意事项" class="headerlink" title="使用临时文件时的注意事项"></a>使用临时文件时的注意事项</h4><ul>
+<li>程序多个进程可能同时运行，它们可能应该使用不同的临时文件</li>
+<li>必须小心设置文件属性，未授权用户不应具有临时文件访问权限</li>
+<li>临时文件的生成应该外部不可预测，否则系统容易受到攻击</li>
+</ul>
+</li>
+<li><h4 id="Linux临时文件函数mkstemp"><a href="#Linux临时文件函数mkstemp" class="headerlink" title="Linux临时文件函数mkstemp()"></a>Linux临时文件函数mkstemp()</h4><ul>
+<li>创建名称唯一的临时文件，使用“XXXXXX”作为模板，返回文件描述符</li>
+<li>如果不希望外界看到临时文件，创建临时文件后应调用unlink()函数将其从目录项中删除，但文件本身仍存在</li>
+<li>文件采用引用计数方式访问；本程序未结束，可用文件描述符访问该文件；文件引用计数降为0，系统自动删除临时文件<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//  向临时文件中写入数据</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>  <span class="title">WriteToTempFile</span><span class="params">( <span class="keyword">char</span> * buffer, <span class="keyword">size_t</span> length )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="comment">//  创建临时文件，“XXXXXX”将在生成时被替换，以保证文件名唯一性</span></span><br><span class="line"><span class="keyword">char</span> temp_filename[] = <span class="string">&quot;/tmp/temp_file.XXXXXX&quot;</span>;</span><br><span class="line"><span class="keyword">int</span> fd = mkstemp( temp_filename );</span><br><span class="line"><span class="comment">//  取消文件链接，不显示该临时文件；关闭文件描述符后，临时文件被删除</span></span><br><span class="line">unlink( temp_filename );</span><br><span class="line"><span class="comment">//  向临时文件中写入数据</span></span><br><span class="line">write( fd, &amp;length, <span class="keyword">sizeof</span>(length) );</span><br><span class="line">write( fd, buffer, length );</span><br><span class="line"><span class="comment">//  返回临时文件的文件描述符</span></span><br><span class="line"><span class="keyword">return</span> fd;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  从临时文件中读取数据</span></span><br><span class="line"><span class="function"><span class="keyword">char</span> * <span class="title">ReadFromTempFile</span><span class="params">( <span class="keyword">int</span> fd, <span class="keyword">size_t</span> * length )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="comment">//  定位到文件开头</span></span><br><span class="line">lseek( fd, <span class="number">0</span>, SEEK_SET );</span><br><span class="line"><span class="comment">//  读取数据</span></span><br><span class="line">read( fd, length, <span class="keyword">sizeof</span>(*length) );</span><br><span class="line"><span class="keyword">char</span> * buffer = <span class="keyword">new</span> <span class="keyword">char</span>[*length];</span><br><span class="line">read( fd, buffer, *length );</span><br><span class="line"><span class="comment">//  关闭文件描述符，临时文件将被删除</span></span><br><span class="line">close( fd );</span><br><span class="line"><span class="keyword">return</span> buffer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="三-文件系统"><a href="#三-文件系统" class="headerlink" title="三. 文件系统"></a>三. 文件系统</h1><ol>
+<li><h3 id="实际文件系统：组成与功能描述"><a href="#实际文件系统：组成与功能描述" class="headerlink" title="实际文件系统：组成与功能描述"></a>实际文件系统：组成与功能描述</h3><ul>
+<li>ext、ext2、ext3、ext4</li>
+<li>引导块：在文件系统开头，通常为一个扇区，存放引导程序，用于读入并启动操作系统</li>
+<li>超级块：用于记录文件系统的管理信息，不同的文件系统拥有不同的超级块</li>
+<li>索引结点区：一个文件或目录占据一个索引结点，首索引结点为该文件系统的根结点，可以利用根结点将一个文件系统挂在另一个文件系统的非叶结点上</li>
+<li>数据区：用于存放文件数据或者管理数据</li>
+</ul>
+</li>
+<li><h3 id="虚拟文件系统VFS"><a href="#虚拟文件系统VFS" class="headerlink" title="虚拟文件系统VFS"></a>虚拟文件系统VFS</h3><ul>
+<li>VFS的特点：只存于内存中，充当实际文件系统与操作系统之间的接口，提供实际文件系统的挂载，并管理实际文件系统</li>
+<li>VFS的构造：系统初始化时构造VFS目录树，建立其数据结构；每个实际文件系统使用struct file_system_type结构存储为结点，并形成链表</li>
+<li>VFS的意义与目的： 支持多种不同的文件系统，内核以一致的方式处理这些文件系统，从而对用户透明</li>
+</ul>
+</li>
+<li><h3 id="特殊文件系统-proc"><a href="#特殊文件系统-proc" class="headerlink" title="特殊文件系统/proc"></a>特殊文件系统/proc</h3><ul>
+<li>从/proc文件系统中抽取信息</li>
+<li>Linux内核的窗口，只存于内存中，并不占用磁盘空间</li>
+<li>典型信息<ul>
+<li>进程信息：进程项、进程参数列表、进程环境、进程可执行文件、进程文件描述符、进程内存统计信息等</li>
+<li>硬件信息：CPU信息、设备信息、PCI总线信息、串口信息等</li>
+<li>内核信息：版本信息、主机名与域名信息、内存使用等</li>
+<li>设备、挂载点与文件系统</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="四-设备"><a href="#四-设备" class="headerlink" title="四. 设备"></a>四. 设备</h1><ol>
+<li><h3 id="设备类型"><a href="#设备类型" class="headerlink" title="设备类型"></a>设备类型</h3><ol>
+<li><h4 id="设备文件的性质"><a href="#设备文件的性质" class="headerlink" title="设备文件的性质"></a>设备文件的性质</h4><ul>
+<li>设备文件不是普通的磁盘文件</li>
+<li>读写设备的数据需要与相应的设备驱动器通信</li>
+</ul>
+</li>
+<li><h3 id="设备文件的类型"><a href="#设备文件的类型" class="headerlink" title="设备文件的类型"></a>设备文件的类型</h3><ul>
+<li>字符设备：读写串行数据字节流，如串口、终端等</li>
+<li>块设备：随机读写固定尺寸数据块，如磁盘设备</li>
+</ul>
+</li>
+<li><h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><ul>
+<li>磁盘挂载到文件系统后，使用文件和目录模式操作</li>
+<li>程序一般不用块设备，内核实现文件系统时使用块设备操作文件</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="设备号"><a href="#设备号" class="headerlink" title="设备号"></a>设备号</h3><ol>
+<li><h4 id="大设备号（major-device-number）"><a href="#大设备号（major-device-number）" class="headerlink" title="大设备号（major device number）"></a>大设备号（major device number）</h4><ul>
+<li>指定设备对应哪个设备驱动器</li>
+<li>对应关系由内核确定</li>
+</ul>
+</li>
+<li><h4 id="小设备号（-minor-device-number-）"><a href="#小设备号（-minor-device-number-）" class="headerlink" title="小设备号（ minor device number ）"></a>小设备号（ minor device number ）</h4><ul>
+<li>区分由设备驱动器控制的单个设备或设备的某个组件</li>
+</ul>
+</li>
+<li><h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><ul>
+<li>3号主设备为IDE控制器，IDE控制器可以连接多个设备（磁盘、磁带、CD-DVD驱动器等）</li>
+<li>主设备的小设备号为0，而从设备的小设备号为64</li>
+<li>主设备单独分区的小设备号从0至63，从设备单独分区的小设备号从64开始</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="设备项"><a href="#设备项" class="headerlink" title="设备项"></a>设备项</h3><ol>
+<li><h4 id="设备项：与文件类似"><a href="#设备项：与文件类似" class="headerlink" title="设备项：与文件类似"></a>设备项：与文件类似</h4><ul>
+<li>可以使用mv、rm命令移动或删除</li>
+<li>如果设备支持读写，cp命令可以从（向）设备读取（写入）数据</li>
+</ul>
+</li>
+<li><h4 id="mknod系统调用：创建设备项（文件系统结点）"><a href="#mknod系统调用：创建设备项（文件系统结点）" class="headerlink" title="mknod系统调用：创建设备项（文件系统结点）"></a>mknod系统调用：创建设备项（文件系统结点）</h4><ul>
+<li>原型：int mknod( const char * pathname, mode_t mode, dev_t dev );</li>
+<li>参数：pathname为设备项包含路径的名称；mode为设备的使用权限与结点类型；当文件类型为S_IFCHR或S_IFBLK时，dev表示设备的大小设备号，否则忽略</li>
+<li>设备项仅仅是与设备通信的门户，在文件系统中创建设备项并不意味着设备可用</li>
+<li>只有超级用户才可以创建设备项</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="设备目录"><a href="#设备目录" class="headerlink" title="设备目录"></a>设备目录</h3><ol>
+<li><h4 id="操作系统已知的设备目录：-dev"><a href="#操作系统已知的设备目录：-dev" class="headerlink" title="操作系统已知的设备目录：/dev"></a>操作系统已知的设备目录：/dev</h4></li>
+<li><h4 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h4><ul>
+<li>硬盘hda为块设备</li>
+<li>硬盘有一个分区hda1</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="硬件设备"><a href="#硬件设备" class="headerlink" title="硬件设备"></a>硬件设备</h3><table>
+<thead>
+<tr>
+<th align="center">设备描述</th>
+<th align="center">设备名称</th>
+<th align="center">大设备号</th>
+<th align="center">小设备号</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">第一软驱</td>
+<td align="center">/dev/fd0</td>
+<td align="center">2</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">第二软驱</td>
+<td align="center">/dev/fd1</td>
+<td align="center">2</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">主IDE控制器，主设备</td>
+<td align="center">/dev/hda</td>
+<td align="center">3</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">主IDE控制器，主设备，第一分区</td>
+<td align="center">/dev/hda1</td>
+<td align="center">3</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">主IDE控制器，从设备</td>
+<td align="center">/dev/hdb</td>
+<td align="center">3</td>
+<td align="center">64</td>
+</tr>
+<tr>
+<td align="center">主IDE控制器，从设备，第一分区</td>
+<td align="center">/dev/hdb1</td>
+<td align="center">3</td>
+<td align="center">65</td>
+</tr>
+<tr>
+<td align="center">次IDE控制器，主设备</td>
+<td align="center">/dev/hdc</td>
+<td align="center">22</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">次IDE控制器，从设备</td>
+<td align="center">/edv/hdd</td>
+<td align="center">22</td>
+<td align="center">64</td>
+</tr>
+<tr>
+<td align="center">第一SCSI设备</td>
+<td align="center">/dev/sda</td>
+<td align="center">8</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">第一SCSI设备，第一分区</td>
+<td align="center">/dev/sda1</td>
+<td align="center">8</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">第一SCSI CD－ROM驱动器</td>
+<td align="center">/dev/scd0</td>
+<td align="center">11</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">第二SCSI CD－ROM驱动器</td>
+<td align="center">/dev/scd1</td>
+<td align="center">11</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">并口0</td>
+<td align="center">/dev/lp0或/dev/par0</td>
+<td align="center">6</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">并口1</td>
+<td align="center">/dev/lp1或/dev/par1</td>
+<td align="center">6</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">第一串口</td>
+<td align="center">/dev/ttyS0</td>
+<td align="center">4</td>
+<td align="center">64</td>
+</tr>
+<tr>
+<td align="center">第二串口</td>
+<td align="center">/dev/ttyS1</td>
+<td align="center">4</td>
+<td align="center">65</td>
+</tr>
+<tr>
+<td align="center">IDE磁带设备</td>
+<td align="center">/dev/ht0</td>
+<td align="center">37</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">第一SCSI磁带设备</td>
+<td align="center">/dev/st0</td>
+<td align="center">9</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">第二SCSI磁带设备</td>
+<td align="center">/dev/st1</td>
+<td align="center">9</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">系统控制台</td>
+<td align="center">/dev/console</td>
+<td align="center">5</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">第一虚拟终端设备</td>
+<td align="center">/edv/tty1</td>
+<td align="center">4</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">第二虚拟终端设备</td>
+<td align="center">/dev/tty2</td>
+<td align="center">4</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">进程当前终端设备</td>
+<td align="center">/dev/tty</td>
+<td align="center">5</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">声卡</td>
+<td align="center">/dev/audio</td>
+<td align="center">14</td>
+<td align="center">5</td>
+</tr>
+</tbody></table>
+</li>
+<li><h3 id="特殊设备"><a href="#特殊设备" class="headerlink" title="特殊设备"></a>特殊设备</h3><ol>
+<li><h4 id="dev-null：哑设备"><a href="#dev-null：哑设备" class="headerlink" title="/dev/null：哑设备"></a>/dev/null：哑设备</h4><ul>
+<li>任何写入哑设备的数据被抛弃</li>
+<li>从哑设备读取不到任何数据，例如cp /dev/null empty-file命令将创建一个长度为0的空文件</li>
+</ul>
+</li>
+<li><h4 id="dev-zero：零设备"><a href="#dev-zero：零设备" class="headerlink" title="/dev/zero：零设备"></a>/dev/zero：零设备</h4><ul>
+<li>行为类似文件，长度无限，但内容全部为0</li>
+</ul>
+</li>
+<li><h4 id="dev-full：满设备"><a href="#dev-full：满设备" class="headerlink" title="/dev/full：满设备"></a>/dev/full：满设备</h4><ul>
+<li>行为类似文件，没有空闲空间存储任何数据</li>
+<li>对满设备的写入总是失败，并将errno设为ENOSPC</li>
+</ul>
+</li>
+<li><h4 id="dev-random和-dev-urandom：随机数设备"><a href="#dev-random和-dev-urandom：随机数设备" class="headerlink" title="/dev/random和/dev/urandom：随机数设备"></a>/dev/random和/dev/urandom：随机数设备</h4><ul>
+<li>C语言的rand()函数生成伪随机数</li>
+<li>随机数设备原理<ul>
+<li>人的行为无法预测，因而是随机的</li>
+<li>Linux内核测量用户的输入活动（如键盘输入和鼠标操作）的时间延迟作为随机数</li>
+</ul>
+</li>
+<li>两者区别<ul>
+<li>/dev/random：在用户没有输入操作时，阻塞随机数读取进程（没有数据可读取）</li>
+<li>/dev/urandom：永不阻塞；在用户没有输入操作时，生成伪随机数代替</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h3 id="设备控制与访问"><a href="#设备控制与访问" class="headerlink" title="设备控制与访问"></a>设备控制与访问</h3><ol>
+<li><h4 id="设备访问"><a href="#设备访问" class="headerlink" title="设备访问"></a>设备访问</h4><ul>
+<li>像文件一样操作设备</li>
+<li>示例：向并口设备发送数据<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> fd = open(<span class="string">&quot;/dev/lp0&quot;</span>, O_WRONLY);</span><br><span class="line">write(fd, buffer, buffer_length);</span><br><span class="line">close(fd);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h4 id="控制硬件设备的函数：ioctl"><a href="#控制硬件设备的函数：ioctl" class="headerlink" title="控制硬件设备的函数：ioctl()"></a>控制硬件设备的函数：ioctl()</h4><ul>
+<li>第一个参数为文件描述符，指定想要控制的设备；第二个参数为控制命令码，指定想要实施的操作<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/cdrom.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ioctl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd = open(argv[<span class="number">1</span>], O_RDONLY);	<span class="comment">//  打开参数所表示的设备</span></span><br><span class="line">    ioctl(fd, CDROMEJECT);			<span class="comment">//  弹出CD-ROM</span></span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="五-库"><a href="#五-库" class="headerlink" title="五. 库"></a>五. 库</h1><ol>
+<li><h3 id="静态库（Archives）"><a href="#静态库（Archives）" class="headerlink" title="静态库（Archives）"></a>静态库（Archives）</h3><ul>
+<li>后缀一般为“*.a”</li>
+<li>使用两个目标文件创建单一静态库的编译与链接命令：ar cr libtest.a test1.o test2.o</li>
+<li>链接器搜索静态库时，链接所有已引用而未处理的符号</li>
+<li>将静态库的链接放置在命令行尾部，确保其引用被正确解析</li>
+</ul>
+</li>
+<li><h3 id="动态库（Shared-Object）"><a href="#动态库（Shared-Object）" class="headerlink" title="动态库（Shared Object）"></a>动态库（Shared Object）</h3><ul>
+<li>共享目标库（类似Windows的DLL），后缀一般为“*.so”</li>
+<li>编译命令：g++ -shared -fPIC -o libtest.so test1.o test2.o</li>
+<li>PIC：位置无关代码（Position-Independent Code）</li>
+<li>编译器首先链接动态库，其次才是静
